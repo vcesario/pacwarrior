@@ -1,0 +1,21 @@
+PACMAN KNOCKOFF - ROADMAP
+
+MAP
+    - [] build map on editor
+    - [] export map to format
+    - [] import map on project
+
+GAME LOGIC
+    - [] scene management
+    - [] player object walking over map
+    - [] collisions
+    - [] ghosts walking on map, respecting collisions
+    - [] basic UI - layers, font rendering
+    - [] player lose condition: ghosts collide with player, player life points zeroed
+    - [] player win condition: collect all coins
+    - [] ghost ai
+    - [] animated entities - player, ghost, coins
+
+ART
+    - [] art pass: map, player, ghost, coins, ui, title screen
+    - [] sound

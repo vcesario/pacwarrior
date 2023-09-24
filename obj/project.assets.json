@@ -2,6 +2,22 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "LDtkMonogame/1.1.2": {
+        "type": "package",
+        "dependencies": {
+          "MonoGame.Framework.DesktopGL": "3.8.1.303"
+        },
+        "compile": {
+          "lib/net6.0/LDtkMonogame.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/LDtkMonogame.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "MonoGame.Content.Builder.Task/3.8.1.303": {
         "type": "package",
         "build": {
@@ -58,6 +74,21 @@
     }
   },
   "libraries": {
+    "LDtkMonogame/1.1.2": {
+      "sha512": "jJmOUsWiyQqr4qx1cJUYFJo2m5ndEPPbpXl7B7R6jOrC1IongQO1unEpe0OolPmmepA5j0/k917UYWYE24iqCw==",
+      "type": "package",
+      "path": "ldtkmonogame/1.1.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "ldtkmonogame.1.1.2.nupkg.sha512",
+        "ldtkmonogame.nuspec",
+        "lib/net6.0/LDtkMonogame.dll",
+        "lib/net6.0/LDtkMonogame.xml",
+        "readme.md"
+      ]
+    },
     "MonoGame.Content.Builder.Task/3.8.1.303": {
       "sha512": "9Ilzzje62LhWElbPNEl7vh7XsRSbze+lvCJdZtTZUGu48FRgvYN6THURwIB9PN98EI33/Wnf6iuShNUtD7hL4Q==",
       "type": "package",
@@ -97,6 +128,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "LDtkMonogame >= 1.1.2",
       "MonoGame.Content.Builder.Task >= 3.8.1.303",
       "MonoGame.Framework.DesktopGL >= 3.8.1.303"
     ]
@@ -138,6 +170,10 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
+          "LDtkMonogame": {
+            "target": "Package",
+            "version": "[1.1.2, )"
+          },
           "MonoGame.Content.Builder.Task": {
             "target": "Package",
             "version": "[3.8.1.303, )"

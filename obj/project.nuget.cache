@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "9/jYQkST3F7tybQDzKRjac0zWSBRWEdZg58XuUYKhdaJyv5+Rg2kjpwKuj5u/Hw/cXU8/Ucdfu9wiS0WrRof9w==",
+  "dgSpecHash": "VS34g4J7XfPxnBlzjQ5pBHbiDs0of9MwG19bfzKQw/XMgteQ+56HNnyhVB7FrQ+k8RMof1vqR51dANVggbkHpQ==",
   "success": true,
   "projectFilePath": "D:\\Documents\\monogame-projects\\topdown1\\topdown1.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\victo\\.nuget\\packages\\ldtkmonogame\\1.1.2\\ldtkmonogame.1.1.2.nupkg.sha512",
     "C:\\Users\\victo\\.nuget\\packages\\monogame.content.builder.task\\3.8.1.303\\monogame.content.builder.task.3.8.1.303.nupkg.sha512",
     "C:\\Users\\victo\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.303\\monogame.framework.desktopgl.3.8.1.303.nupkg.sha512"
   ],

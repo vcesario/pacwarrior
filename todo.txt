@@ -1,9 +1,9 @@
 PACMAN KNOCKOFF - ROADMAP
 
 MAP
-    - [] build map on editor
-    - [] export map to format
-    - [] import map on project
+    - [x] build map on editor
+    - [-] export map to format (didn't need to with ldtk)
+    - [x] import map on project
 
 GAME LOGIC
     - [] scene management
@@ -19,3 +19,8 @@ GAME LOGIC
 ART
     - [] art pass: map, player, ghost, coins, ui, title screen
     - [] sound
+
+
+
+NEXT PROJECTS:
+    - generate level by wave function collapse

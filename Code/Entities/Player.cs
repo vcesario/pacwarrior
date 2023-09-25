@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using topdown1;
@@ -24,6 +25,6 @@ public class Player
 
     public void Move(Vector2 direction, double frameDuration)
     {
-        m_Position += direction * m_PlayerSpeed * (float)frameDuration;
+        m_Position += direction * Convert.ToInt32(m_PlayerSpeed * (float)frameDuration);
     }
 }

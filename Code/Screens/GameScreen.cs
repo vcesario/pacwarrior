@@ -2,14 +2,18 @@ using System;
 using LDtk;
 using LDtk.Renderer;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using topdown1;
 
 public class GameScreen : AbstractScreen
 {
     private LDtkWorld m_World;
     private LDtkRenderer m_Renderer;
     private SpriteBatch m_SpriteBatch;
+
+    private Player m_Player;
 
     public GameScreen(ScreenManager screenManager, SpriteBatch spriteBatch) : base(screenManager)
     {
@@ -18,9 +22,28 @@ public class GameScreen : AbstractScreen
 
     public override void HandleInput(GameTime gameTime, InputState input)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+        KeyboardState keyboardState = Keyboard.GetState();
+        if (keyboardState.IsKeyDown(Keys.Enter))
         {
             GoToStartScene();
+        }
+
+        // move player
+        if (keyboardState.IsKeyDown(Keys.A))
+        {
+            m_Player.Move(Vector2.UnitX * -1, gameTime.ElapsedGameTime.TotalSeconds);
+        }
+        else if (keyboardState.IsKeyDown(Keys.D))
+        {
+            m_Player.Move(Vector2.UnitX, gameTime.ElapsedGameTime.TotalSeconds);
+        }
+        else if (keyboardState.IsKeyDown(Keys.W))
+        {
+            m_Player.Move(Vector2.UnitY * -1, gameTime.ElapsedGameTime.TotalSeconds);
+        }
+        else if (keyboardState.IsKeyDown(Keys.S))
+        {
+            m_Player.Move(Vector2.UnitY, gameTime.ElapsedGameTime.TotalSeconds);
         }
     }
 
@@ -32,6 +55,9 @@ public class GameScreen : AbstractScreen
         m_Renderer = new LDtkRenderer(m_SpriteBatch);
         foreach (var level in m_World.Levels)
             m_Renderer.PrerenderLevel(level);
+
+        var playerEntity = m_World.GetEntity<PlayerEntity>();
+        m_Player = new Player(playerEntity);
     }
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
@@ -44,6 +70,8 @@ public class GameScreen : AbstractScreen
         {
             m_Renderer.RenderPrerenderedLevel(level);
         }
+
+        m_Player.Draw(spriteBatch);
     }
 
     private void GoToStartScene()

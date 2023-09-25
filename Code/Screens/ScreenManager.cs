@@ -37,17 +37,19 @@ public class ScreenManager : DrawableGameComponent
         game.IsMouseVisible = true;
     }
 
-    public override void Initialize()
-    {
-        // first screen
-        m_Screens.Add(InstantiateStartScreen());
-
-        base.Initialize();
-    }
+    // public override void Initialize()
+    // {
+    //     base.Initialize();
+    // }
 
     protected override void LoadContent()
     {
         m_SharedSpriteBatch = new SpriteBatch(GraphicsDevice);
+
+        // first screen
+        // m_Screens.Add(InstantiateStartScreen()); // <-- original
+        m_Screens.Add(InstantiateGameScreen()); // <-- debug
+
         m_Screens[0].Load();
 
         base.LoadContent();
@@ -120,7 +122,7 @@ public class ScreenManager : DrawableGameComponent
 
     public void RemoveScreenWithTransition(AbstractScreen screen, Action onTransitionEnded)
     {
-        // animation
+        // screen animation
         m_Screens.Remove(screen);
         onTransitionEnded?.Invoke();
     }
@@ -129,7 +131,7 @@ public class ScreenManager : DrawableGameComponent
     {
         m_Screens.Add(screen);
         screen.Load();
-        // animation
+        // screen animation
     }
 
     public GameScreen InstantiateGameScreen()

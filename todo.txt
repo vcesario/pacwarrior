@@ -7,7 +7,7 @@ MAP
 
 GAME LOGIC
     - [x] scene management
-    - [] player object walking over map
+    - [x] player object walking over map
     - [] collisions
     - [] ghosts walking on map, respecting collisions
     - [] basic UI - layers, font rendering
@@ -17,7 +17,14 @@ GAME LOGIC
     - [] animated entities - player, ghost, coins
 
 ART
-    - [] art pass: map, player, ghost, coins, ui, title screen
+    - art pass
+        - [] map
+        - [] player
+        - [] ghost
+        - [] coins
+        - [] ui
+        - [] title screen
+        - [] screen transitions
     - [] sound
 
 

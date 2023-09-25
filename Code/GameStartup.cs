@@ -4,24 +4,30 @@ using Microsoft.Xna.Framework.Input;
 
 using LDtk;
 using LDtk.Renderer;
+using Microsoft.Xna.Framework.Content;
 
 namespace topdown1;
 
 public class GameStartup : Game
 {
+    private static GameStartup m_StaticReference;
+
     public GraphicsDeviceManager Graphics
     { get; private set; }
 
     private ScreenManager m_ScreenManager;
 
+    public static ContentManager ContentManager => m_StaticReference.Content;
+
     public GameStartup()
     {
-        Graphics = new GraphicsDeviceManager(this);
+        m_StaticReference = this;
 
+        Graphics = new GraphicsDeviceManager(this);
+        Content.RootDirectory = "Content";
+        
         m_ScreenManager = new ScreenManager(this);
         Components.Add(m_ScreenManager);
-
-        Content.RootDirectory = "Content";
     }
 
     // protected override void Initialize()

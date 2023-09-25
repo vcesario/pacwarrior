@@ -6,7 +6,7 @@ MAP
     - [x] import map on project
 
 GAME LOGIC
-    - [] scene management
+    - [x] scene management
     - [] player object walking over map
     - [] collisions
     - [] ghosts walking on map, respecting collisions

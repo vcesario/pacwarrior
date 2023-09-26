@@ -1,5 +1,6 @@
-
 using Microsoft.Xna.Framework;
+
+namespace topdown1;
 
 public struct BoundingBox
 {

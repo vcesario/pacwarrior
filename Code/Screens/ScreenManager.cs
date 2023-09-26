@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using topdown1;
+
+namespace topdown1;
 
 public enum ScreenStates
 {

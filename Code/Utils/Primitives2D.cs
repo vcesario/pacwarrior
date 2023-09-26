@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+namespace topdown1;
+
 /// <summary>
 /// </summary>
 public static class Primitives2D

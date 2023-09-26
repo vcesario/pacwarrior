@@ -1,10 +1,10 @@
-using System;
 using System.Linq;
 using LDtk;
 using LDtk.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using topdown1;
+
+namespace topdown1;
 
 public static class MapGrid
 {

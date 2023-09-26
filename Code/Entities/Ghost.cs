@@ -1,6 +1,6 @@
 namespace topdown1;
 
-public class InputState
+public class Ghost
 {
 
 }

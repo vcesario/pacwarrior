@@ -1,6 +1,8 @@
 
 using Microsoft.Xna.Framework;
 
+namespace topdown1;
+
 public static class Extensions
 {
     public static Point Scale(this Point point, int value)

@@ -1,7 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using topdown1;
+
+namespace topdown1;
 
 public class Player
 {

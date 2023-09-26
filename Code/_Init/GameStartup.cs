@@ -23,6 +23,8 @@ public class GameStartup : Game
     private bool m_F1Pressed;
     public static bool DebugEnabled { get; private set; }
 
+    public static Random RandomGenerator { get; private set; }
+
 
     public GameStartup()
     {
@@ -33,6 +35,8 @@ public class GameStartup : Game
 
         m_ScreenManager = new ScreenManager(this);
         Components.Add(m_ScreenManager);
+
+        RandomGenerator = new Random();
     }
 
     // protected override void Initialize()

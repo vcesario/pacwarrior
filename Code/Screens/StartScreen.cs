@@ -29,7 +29,7 @@ public class StartScreen : AbstractScreen
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        spriteBatch.GraphicsDevice.Clear(Color.FloralWhite);
+        spriteBatch.GraphicsDevice.Clear(Color.RoyalBlue);
     }
 
     private void GoToGameplayScene()

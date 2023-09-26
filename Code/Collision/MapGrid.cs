@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using LDtk;
 using LDtk.Renderer;
@@ -16,8 +17,6 @@ public static class MapGrid
 
     private static LDtkRenderer m_Renderer;
     private static LDtkLevel m_Level;
-
-
 
     public static void Initialize(LDtkLevel level, LDtkRenderer levelRenderer)
     {
@@ -41,9 +40,17 @@ public static class MapGrid
         m_Level = level;
     }
 
-    public static Point ConvertPixelToGrid(Point pxPosition)
+    /// <summary>
+    /// Returns the top-left pixel of that grid coordinate.
+    /// </summary>
+    public static Point GridCoordinateToPosition(Point gridCoordinate)
     {
-        Point gridCoordinate = new Point(pxPosition.X / TileSize, pxPosition.Y / TileSize);
+        Point pixel = new Point(gridCoordinate.X * TileSize, gridCoordinate.Y * TileSize);
+        return pixel;
+    }
+    public static Point PositionToGridCoordinate(Point position)
+    {
+        Point gridCoordinate = new Point(position.X / TileSize, position.Y / TileSize);
         return gridCoordinate;
     }
 
@@ -71,5 +78,20 @@ public static class MapGrid
                 }
             }
         }
+    }
+
+    public static List<Point> GetAllWalkableTiles()
+    {
+        List<Point> walkables = new List<Point>();
+        for (int j = 0; j < GridSize.Y; j++)
+        {
+            for (int i = 0; i < GridSize.X; i++)
+            {
+                if (!IsTileAWall(i, j))
+                    walkables.Add(new Point(i, j));
+            }
+        }
+
+        return walkables;
     }
 }

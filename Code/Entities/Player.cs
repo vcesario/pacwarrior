@@ -6,9 +6,7 @@ namespace topdown1;
 
 public class Player
 {
-    public PlayerEntity SourceEntity { get; private set; }
-
-    private BoundingBox m_PlayerBox;
+    private BoundingBox m_TexBox;
 
     private float m_XRemainder;
     private float m_YRemainder;
@@ -16,24 +14,23 @@ public class Player
     private Point m_ColliderSize;
     private Point m_ColliderSizeHalf;
 
-    private float m_PlayerSpeed = 150f;
+    private float m_PlayerSpeed;
     private Texture2D m_Tex;
 
     public Player(PlayerEntity entity)
     {
-        SourceEntity = entity;
-
-        m_PlayerBox = new BoundingBox((int)entity.Position.X, (int)entity.Position.Y, 16, 16);
+        m_TexBox = new BoundingBox((int)entity.Position.X, (int)entity.Position.Y, 16, 16);
 
         m_ColliderSize = new Point(11, 11);
         m_ColliderSizeHalf = m_ColliderSize.Scale(0.5f);
 
-        m_Tex = GameStartup.ContentManager.Load<Texture2D>("textures/tilemap");
+        m_PlayerSpeed = 150f;
+        m_Tex = TextureManager.CharacterTex;
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(m_Tex, new Vector2(m_PlayerBox.Left, m_PlayerBox.Top), SourceEntity.Tile, Color.White, 0f, SourceEntity.Pivot * SourceEntity.Size, 1f, SpriteEffects.None, 0f);
+        spriteBatch.Draw(m_Tex, new Vector2(m_TexBox.Left, m_TexBox.Top), TextureManager.PlayerTexSourceRect, Color.White);
 
         if (GameStartup.DebugEnabled)
         {
@@ -71,8 +68,8 @@ public class Player
 
             if (sign > 0) // right side checking
             {
-                Point coord1 = MapGrid.ConvertPixelToGrid(offsettedBox.TopRight);
-                Point coord2 = MapGrid.ConvertPixelToGrid(offsettedBox.BottomRight);
+                Point coord1 = MapGrid.PositionToGridCoordinate(offsettedBox.TopRight);
+                Point coord2 = MapGrid.PositionToGridCoordinate(offsettedBox.BottomRight);
 
                 if (MapGrid.IsTileAWall(coord1.X, coord1.Y) || MapGrid.IsTileAWall(coord2.X, coord2.Y))
                 {
@@ -81,8 +78,8 @@ public class Player
             }
             else // left side checking
             {
-                Point coord1 = MapGrid.ConvertPixelToGrid(offsettedBox.TopLeft);
-                Point coord2 = MapGrid.ConvertPixelToGrid(offsettedBox.BottomLeft);
+                Point coord1 = MapGrid.PositionToGridCoordinate(offsettedBox.TopLeft);
+                Point coord2 = MapGrid.PositionToGridCoordinate(offsettedBox.BottomLeft);
 
                 if (MapGrid.IsTileAWall(coord1.X, coord1.Y) || MapGrid.IsTileAWall(coord2.X, coord2.Y))
                 {
@@ -92,7 +89,7 @@ public class Player
 
             if (!collided)
             {
-                m_PlayerBox.Left += sign;
+                m_TexBox.Left += sign;
                 pixelAmount -= sign;
             }
         }
@@ -116,8 +113,8 @@ public class Player
 
             if (sign > 0) // bottom side checking
             {
-                Point coord1 = MapGrid.ConvertPixelToGrid(offsettedBox.BottomLeft);
-                Point coord2 = MapGrid.ConvertPixelToGrid(offsettedBox.BottomRight);
+                Point coord1 = MapGrid.PositionToGridCoordinate(offsettedBox.BottomLeft);
+                Point coord2 = MapGrid.PositionToGridCoordinate(offsettedBox.BottomRight);
 
                 if (MapGrid.IsTileAWall(coord1.X, coord1.Y) || MapGrid.IsTileAWall(coord2.X, coord2.Y))
                 {
@@ -126,8 +123,8 @@ public class Player
             }
             else // top side checking
             {
-                Point coord1 = MapGrid.ConvertPixelToGrid(offsettedBox.TopLeft);
-                Point coord2 = MapGrid.ConvertPixelToGrid(offsettedBox.TopRight);
+                Point coord1 = MapGrid.PositionToGridCoordinate(offsettedBox.TopLeft);
+                Point coord2 = MapGrid.PositionToGridCoordinate(offsettedBox.TopRight);
 
                 if (MapGrid.IsTileAWall(coord1.X, coord1.Y) || MapGrid.IsTileAWall(coord2.X, coord2.Y))
                 {
@@ -137,7 +134,7 @@ public class Player
 
             if (!collided)
             {
-                m_PlayerBox.Top += sign;
+                m_TexBox.Top += sign;
                 pixelAmount -= sign;
             }
         }
@@ -146,8 +143,8 @@ public class Player
     private BoundingBox GetColliderBox()
     {
         // get colliders' top left
-        int x = m_PlayerBox.Left + (int)(m_PlayerBox.HalfWidth - m_ColliderSizeHalf.X);
-        int y = m_PlayerBox.Top + (int)(m_PlayerBox.HalfHeight - m_ColliderSizeHalf.Y);
+        int x = m_TexBox.Left + (int)(m_TexBox.HalfWidth - m_ColliderSizeHalf.X);
+        int y = m_TexBox.Top + (int)(m_TexBox.HalfHeight - m_ColliderSizeHalf.Y);
 
         return new BoundingBox(x, y, m_ColliderSize.X, m_ColliderSize.Y);
     }

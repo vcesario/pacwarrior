@@ -10,8 +10,8 @@
 
 - [x] scene management
 - [x] player object walking over map
-- [] collisions
-- [] ghosts walking on map, respecting collisions
+- [x] collisions
+- [] ghosts walking on map, respecting collisions (a*?)
 - [] basic UI - layers, font rendering
 - [] player lose condition: ghosts collide with player, player life points zeroed
 - [] player win condition: collect all coins

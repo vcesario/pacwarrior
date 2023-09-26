@@ -9,4 +9,10 @@ public static class Extensions
         point.Y *= value;
         return point;
     }
+    public static Point Scale(this Point point, float value)
+    {
+        point.X = (int)(point.X * value);
+        point.Y = (int)(point.Y * value);
+        return point;
+    }
 }

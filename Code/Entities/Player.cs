@@ -42,6 +42,10 @@ public class Player
 
     public void Move(Vector2 direction, double frameDuration)
     {
+        if (direction.LengthSquared() == 0)
+            return;
+
+        direction.Normalize();
         Vector2 displacement = direction * m_PlayerSpeed * (float)frameDuration;
         MoveX(displacement.X);
         MoveY(displacement.Y);

@@ -43,22 +43,27 @@ public class GameScreen : AbstractScreen
         }
 
         // move player
+        Vector2 resultMovement = Vector2.Zero;
         if (keyboardState.IsKeyDown(Keys.A))
         {
-            m_Player.Move(Vector2.UnitX * -1, gameTime.ElapsedGameTime.TotalSeconds);
+            resultMovement += Vector2.UnitX * -1;
         }
         else if (keyboardState.IsKeyDown(Keys.D))
         {
-            m_Player.Move(Vector2.UnitX, gameTime.ElapsedGameTime.TotalSeconds);
+            resultMovement += Vector2.UnitX;
         }
-        else if (keyboardState.IsKeyDown(Keys.W))
+
+        if (keyboardState.IsKeyDown(Keys.W))
         {
-            m_Player.Move(Vector2.UnitY * -1, gameTime.ElapsedGameTime.TotalSeconds);
+            resultMovement += Vector2.UnitY * -1;
         }
         else if (keyboardState.IsKeyDown(Keys.S))
         {
-            m_Player.Move(Vector2.UnitY, gameTime.ElapsedGameTime.TotalSeconds);
+            resultMovement += Vector2.UnitY;
         }
+
+        m_Player.Move(resultMovement, gameTime.ElapsedGameTime.TotalSeconds);
+
     }
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)

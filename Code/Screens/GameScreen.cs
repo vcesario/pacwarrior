@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using LDtk;
+using LDtk.ContentPipeline;
 using LDtk.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -10,7 +12,7 @@ using topdown1;
 public class GameScreen : AbstractScreen
 {
     private LDtkWorld m_World;
-    private LDtkRenderer m_Renderer;
+    private List<LDtkLevel> m_LevelList;
     private SpriteBatch m_SpriteBatch;
 
     private Player m_Player;
@@ -18,6 +20,18 @@ public class GameScreen : AbstractScreen
     public GameScreen(ScreenManager screenManager, SpriteBatch spriteBatch) : base(screenManager)
     {
         m_SpriteBatch = spriteBatch;
+    }
+
+    public override void Load()
+    {
+        LDtkFile file = LDtkFile.FromFile("Content/map/level-layout.ldtk");
+        m_World = file.LoadWorld(new Guid("9b923070-3b70-11ee-9cfe-037a95b3620d"));
+
+        m_LevelList = new List<LDtkLevel>(m_World.Levels);
+        MapGrid.Initialize(m_LevelList[0], new LDtkRenderer(m_SpriteBatch));
+
+        var playerEntity = m_World.GetEntity<PlayerEntity>();
+        m_Player = new Player(playerEntity);
     }
 
     public override void HandleInput(GameTime gameTime, InputState input)
@@ -47,29 +61,13 @@ public class GameScreen : AbstractScreen
         }
     }
 
-    public override void Load()
-    {
-        LDtkFile file = LDtkFile.FromFile("Content/map/level-layout.ldtk");
-        m_World = file.LoadWorld(new System.Guid("9b923070-3b70-11ee-9cfe-037a95b3620d"));
-
-        m_Renderer = new LDtkRenderer(m_SpriteBatch);
-        foreach (var level in m_World.Levels)
-            m_Renderer.PrerenderLevel(level);
-
-        var playerEntity = m_World.GetEntity<PlayerEntity>();
-        m_Player = new Player(playerEntity);
-    }
-
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
     {
     }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        foreach (var level in m_World.Levels)
-        {
-            m_Renderer.RenderPrerenderedLevel(level);
-        }
+        MapGrid.Draw(spriteBatch);
 
         m_Player.Draw(spriteBatch);
     }

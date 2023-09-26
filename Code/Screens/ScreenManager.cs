@@ -14,13 +14,21 @@ public enum ScreenStates
 
 public class ScreenManager : DrawableGameComponent
 {
-    // CONSTANT PROPERTIES
-    private const int TILE_SIZE = 16;
-    private const int GAME_WIDTH = 3 * 16 * TILE_SIZE;
-    private const int GAME_HEIGHT = 3 * 9 * TILE_SIZE;
+    // ** CONSTANT PROPERTIES
+
+    // -- these values match the LDTk settings, but shouldn't be used in any other part of the code
+    // since this is only for window setup and it's just a "coincidence" that they match
+    // basically, i want the window to be the size of the map, but I need the values before the map is initialized
+    private const int _TileSize = 16;
+    private const int _ScreenWidthInTiles = 3 * 16;
+    private const int _ScreenHeightInTiles = 3 * 9;
+    // --
+
+    public const int SCREEN_WIDTH = _ScreenWidthInTiles * _TileSize;
+    public const int SCREEN_HEIGHT = _ScreenHeightInTiles * _TileSize;
     // **
 
-    private InputState input = new InputState();
+    private InputState m_Input = new InputState();
 
     private SpriteBatch m_SharedSpriteBatch;
 
@@ -30,8 +38,8 @@ public class ScreenManager : DrawableGameComponent
     public ScreenManager(GameStartup game) : base(game)
     {
         // applying screen size
-        game.Graphics.PreferredBackBufferWidth = GAME_WIDTH;
-        game.Graphics.PreferredBackBufferHeight = GAME_HEIGHT;
+        game.Graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
+        game.Graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
         game.Graphics.ApplyChanges();
 
         game.IsMouseVisible = true;
@@ -85,7 +93,7 @@ public class ScreenManager : DrawableGameComponent
                 // give it a chance to handle input.
                 if (!otherScreenHasFocus)
                 {
-                    screen.HandleInput(gameTime, input);
+                    screen.HandleInput(gameTime, m_Input);
 
                     otherScreenHasFocus = true;
                 }

@@ -29,4 +29,9 @@ public class Ghost
         m_TexBox.Top = position.Y;
         m_TexBox.Left = position.X;
     }
+
+    public void SetDirection(Direction4 direction)
+    {
+        CurrentDirection = direction;
+    }
 }

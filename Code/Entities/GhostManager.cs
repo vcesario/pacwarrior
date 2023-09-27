@@ -90,7 +90,8 @@ public static class GhostManager
 
                 if (/**/true) // if distance large enough, make ghost roam
                 {
-                    Point nextCoordinate = GetRoamCoord(gridCoordinate, direction);
+                    GetRoamCoord(gridCoordinate, direction, out Point nextCoordinate, out Direction4 nextDirection);
+                    m_Ghosts[i].SetDirection(nextDirection);
                     m_GhostMoveCoords[i] = new Tuple<Point, Point>(m_Ghosts[i].Position, MapGrid.GridCoordinateToPosition(nextCoordinate));
                 }
                 else // else, make ghost chase player
@@ -105,9 +106,31 @@ public static class GhostManager
         }
     }
 
-    private static Point GetRoamCoord(Point currentCoordinate, Direction4 direction)
+    private static void GetRoamCoord(Point currentCoordinate, Direction4 currentDirection, out Point nextCoordinate, out Direction4 nextDirection)
     {
-        return currentCoordinate + direction.ToCoordinate();
+        Direction4 leftDirection = currentDirection.Previous();
+        Direction4 rightDirection = currentDirection.Next();
+        Point frontCoord = currentCoordinate + currentDirection.ToCoordinate();
+        Point leftCoord = currentCoordinate + leftDirection.ToCoordinate();
+        Point rightCoord = currentCoordinate + rightDirection.ToCoordinate();
+
+        List<Point> walkable = new List<Point>();
+        if (!MapGrid.IsTileAWall(frontCoord.X, frontCoord.Y))
+            walkable.Add(frontCoord);
+        if (!MapGrid.IsTileAWall(leftCoord.X, leftCoord.Y))
+            walkable.Add(leftCoord);
+        if (!MapGrid.IsTileAWall(rightCoord.X, rightCoord.Y))
+            walkable.Add(rightCoord);
+
+        // here I could make sure that walkable has at least 1 element, but since the level loops on itself,
+        // this will always be true so I'll save myself this check... unless there's an error on the map editing side  x)
+        nextCoordinate = walkable[GameStartup.RandomGenerator.Next(walkable.Count)];
+        if (nextCoordinate == frontCoord)
+            nextDirection = currentDirection;
+        else if (nextCoordinate == leftCoord)
+            nextDirection = leftDirection;
+        else //if (nextCoordinate == rightCoord)
+            nextDirection = rightDirection;
     }
     private static Point GetChaseCoord()
     {

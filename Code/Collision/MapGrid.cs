@@ -40,26 +40,6 @@ public static class MapGrid
         m_Level = level;
     }
 
-    /// <summary>
-    /// Returns the top-left pixel of that grid coordinate.
-    /// </summary>
-    public static Point GridCoordinateToPosition(Point gridCoordinate)
-    {
-        Point pixel = new Point(gridCoordinate.X * TileSize, gridCoordinate.Y * TileSize);
-        return pixel;
-    }
-    public static Point PositionToGridCoordinate(Point position)
-    {
-        Point gridCoordinate = new Point(position.X / TileSize, position.Y / TileSize);
-        return gridCoordinate;
-    }
-
-    public static bool IsTileAWall(int gridX, int gridY)
-    {
-        bool isWall = CollisionMap[gridY * GridSize.X + gridX];
-        return isWall;
-    }
-
     public static void Draw(SpriteBatch spriteBatch)
     {
         m_Renderer.RenderPrerenderedLevel(m_Level);
@@ -80,6 +60,26 @@ public static class MapGrid
         }
     }
 
+    /// <summary>
+    /// Returns the top-left pixel of that grid coordinate.
+    /// </summary>
+    public static Point GridCoordinateToPosition(Point gridCoordinate)
+    {
+        Point pixel = new Point(gridCoordinate.X * TileSize, gridCoordinate.Y * TileSize);
+        return pixel;
+    }
+    public static Point PositionToGridCoordinate(Point position)
+    {
+        Point gridCoordinate = new Point(position.X / TileSize, position.Y / TileSize);
+        return gridCoordinate;
+    }
+
+    public static bool IsTileAWall(int gridX, int gridY)
+    {
+        bool isWall = CollisionMap[gridY * GridSize.X + gridX];
+        return isWall;
+    }
+
     public static List<Point> GetAllWalkableTiles()
     {
         List<Point> walkables = new List<Point>();
@@ -93,5 +93,22 @@ public static class MapGrid
         }
 
         return walkables;
+    }
+
+    public static Point ToCoordinate(this Direction4 direction)
+    {
+        switch (direction)
+        {
+            case Direction4.Down:
+                return new Point(0, 1);
+            case Direction4.Left:
+                return new Point(-1, 0);
+            case Direction4.Right:
+                return new Point(1, 0);
+            case Direction4.Up:
+                return new Point(0, -1);
+            default:
+                return Point.Zero;
+        }
     }
 }

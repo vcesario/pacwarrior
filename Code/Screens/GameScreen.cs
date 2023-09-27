@@ -17,7 +17,6 @@ public class GameScreen : AbstractScreen
     private SpriteBatch m_SpriteBatch;
 
     private Player m_Player;
-    private List<Ghost> m_Ghosts;
 
     public GameScreen(ScreenManager screenManager, SpriteBatch spriteBatch) : base(screenManager)
     {
@@ -36,30 +35,8 @@ public class GameScreen : AbstractScreen
         var playerEntity = m_World.GetEntity<PlayerEntity>();
         m_Player = new Player(playerEntity);
 
-        // ** create initial ghosts
-        List<Point> walkables = MapGrid.GetAllWalkableTiles();
-
-        // remove tiles in the lower half 
-        for (int i = walkables.Count - 1; i >= 0; i--)
-        {
-            if (walkables[i].Y > MapGrid.GridSize.Y / 2.0f)
-                walkables.RemoveAt(i);
-        }
-
-        // randomize positions
-        walkables.RandomSort();
-
-        // instantiate n ghosts
-        m_Ghosts = new List<Ghost>();
-        int initialGhostAmount = 3;
-        for (int i = 0; i < initialGhostAmount; i++)
-        {
-            Ghost newGhost = new Ghost(MapGrid.GridCoordinateToPosition(walkables[i]));
-            m_Ghosts.Add(newGhost);
-        }
-
-
-        // **
+        // initialize enemies
+        GhostManager.Initialize();
     }
 
     public override void HandleInput(GameTime gameTime, InputState input)
@@ -96,16 +73,14 @@ public class GameScreen : AbstractScreen
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
     {
+        GhostManager.UpdateBrain(gameTime);
     }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
         MapGrid.Draw(spriteBatch);
 
-        for (int i = 0; i < m_Ghosts.Count; i++)
-        {
-            m_Ghosts[i].Draw(spriteBatch);
-        }
+        GhostManager.DrawGhosts(spriteBatch);
 
         m_Player.Draw(spriteBatch);
     }

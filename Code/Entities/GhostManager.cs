@@ -10,11 +10,11 @@ public static class GhostManager
     private static List<Ghost> m_Ghosts;
     private static Tuple<Point, Point>[] m_GhostMoveCoords;
 
+    private static bool m_IsMoving;
     private static float m_GhostSpeed = 100;
     private static float m_MovementDuration;
     private static double m_MovementStartTime;
 
-    private static bool m_IsMoving;
 
     public static void Initialize()
     {
@@ -48,6 +48,8 @@ public static class GhostManager
         // to be calculated ahead of time to prevent movement stuttering... and probably other stuff, but I decided
         // not to think about it :)
         // **
+
+        m_IsMoving = false;
     }
 
     public static void UpdateBrain(GameTime gameTime)

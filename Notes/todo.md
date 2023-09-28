@@ -10,13 +10,16 @@
 
 - [x] scene management
 - [x] player object walking over map
-- [x] collisions
+- [x] player x wall collisions
 - [x] ghosts walking on map, respecting collisions
-- [] basic UI - layers, font rendering
-- [] player lose condition: ghosts collide with player, player life points zeroed
-- [] player win condition: collect all coins
+- [] hud: basic UI layers, font rendering
+- [] pause screen
+- [] player lose condition: player x ghost collission, player life points zeroed, game over screen (bad)
+- [] player win condition: collect all coins, game over screen (good)
 - [] ghost ai
-- [] animated entities - player, ghost, coins
+- [] player power: collect special coin to power up for X seconds
+- [] enemy respawn
+- [] animation system - player, ghost, coins
 
 #### ART
 

@@ -7,20 +7,18 @@ namespace topdown1;
 
 public class StartScreen : AbstractScreen
 {
-    public StartScreen(ScreenManager screenManager) : base(screenManager)
-    {
-    }
-
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
     {
     }
 
-    public override void HandleInput(GameTime gameTime, InputState input)
+    public override bool HandleInput(GameTime gameTime, InputState input)
     {
         if (Keyboard.GetState().IsKeyDown(Keys.Space))
         {
-            GoToGameplayScene();
+            LoadGameplay();
         }
+
+        return true;
     }
 
     public override void Load()
@@ -32,15 +30,11 @@ public class StartScreen : AbstractScreen
         spriteBatch.GraphicsDevice.Clear(Color.RoyalBlue);
     }
 
-    private void GoToGameplayScene()
+    private void LoadGameplay()
     {
         Console.WriteLine("Going to Gameplay scene...");
 
-        ScreenManager.RemoveScreenWithTransition(this, addGameScreen);
-
-        void addGameScreen()
-        {
-            ScreenManager.AddScreenWithTransition(ScreenManager.InstantiateGameScreen());
-        }
+        ScreenManager.RemoveAllScreens();
+        ScreenManager.AddScreen(new GameScreen(ScreenManager.SharedSpriteBatch), new HudScreen());
     }
 }

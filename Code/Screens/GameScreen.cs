@@ -18,7 +18,7 @@ public class GameScreen : AbstractScreen
 
     private Player m_Player;
 
-    public GameScreen(ScreenManager screenManager, SpriteBatch spriteBatch) : base(screenManager)
+    public GameScreen(SpriteBatch spriteBatch)
     {
         m_SpriteBatch = spriteBatch;
     }
@@ -39,7 +39,7 @@ public class GameScreen : AbstractScreen
         GhostManager.Initialize();
     }
 
-    public override void HandleInput(GameTime gameTime, InputState input)
+    public override bool HandleInput(GameTime gameTime, InputState input)
     {
         KeyboardState keyboardState = Keyboard.GetState();
         if (keyboardState.IsKeyDown(Keys.Enter))
@@ -69,6 +69,7 @@ public class GameScreen : AbstractScreen
 
         m_Player.Move(resultMovement, gameTime.ElapsedGameTime.TotalSeconds);
 
+        return true;
     }
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
@@ -89,11 +90,7 @@ public class GameScreen : AbstractScreen
     {
         Console.WriteLine("Going to Start scene...");
 
-        ScreenManager.RemoveScreenWithTransition(this, addStartScreen);
-
-        void addStartScreen()
-        {
-            ScreenManager.AddScreenWithTransition(ScreenManager.InstantiateStartScreen());
-        }
+        ScreenManager.RemoveAllScreens();
+        ScreenManager.AddScreen(new StartScreen());
     }
 }

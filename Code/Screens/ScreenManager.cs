@@ -29,21 +29,36 @@ public class ScreenManager : DrawableGameComponent
     public const int SCREEN_HEIGHT = _ScreenHeightInTiles * _TileSize;
     // **
 
-    private InputState m_Input = new InputState();
+    private InputState m_Input;
 
     private SpriteBatch m_SharedSpriteBatch;
+    public static SpriteBatch SharedSpriteBatch => m_Instance.m_SharedSpriteBatch;
 
-    private List<AbstractScreen> m_Screens = new List<AbstractScreen>();
-    private List<AbstractScreen> m_TempScreensList = new List<AbstractScreen>();
+    private Texture2D m_BlankTexture;
+
+    private List<AbstractScreen> m_Screens;
+    private List<AbstractScreen> m_TempScreensList;
+
+    private bool m_TraceEnabled;
+
+    public static GraphicsDevice SharedGraphicsDevice => m_Instance.GraphicsDevice;
+
+    private static ScreenManager m_Instance;
 
     public ScreenManager(GameStartup game) : base(game)
     {
+        m_Instance = this;
+
         // applying screen size
         game.Graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
         game.Graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
         game.Graphics.ApplyChanges();
 
         game.IsMouseVisible = true;
+
+        m_Input = new InputState();
+        m_Screens = new List<AbstractScreen>();
+        m_TempScreensList = new List<AbstractScreen>();
     }
 
     // public override void Initialize()
@@ -55,11 +70,12 @@ public class ScreenManager : DrawableGameComponent
     {
         m_SharedSpriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // first screen
-        // m_Screens.Add(InstantiateStartScreen()); // <-- original
-        m_Screens.Add(InstantiateGameScreen()); // <-- debug
+        m_BlankTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+        m_BlankTexture.SetData(new[] { Color.White });
 
-        m_Screens[0].Load();
+        // first screen
+        AddScreen(new StartScreen()); // <-- original
+        // AddScreen(new GameScreen(m_SharedSpriteBatch), new HudScreen()); // <-- debug
 
         base.LoadContent();
     }
@@ -94,9 +110,8 @@ public class ScreenManager : DrawableGameComponent
                 // give it a chance to handle input.
                 if (!otherScreenHasFocus)
                 {
-                    screen.HandleInput(gameTime, m_Input);
-
-                    otherScreenHasFocus = true;
+                    if (screen.HandleInput(gameTime, m_Input))
+                        otherScreenHasFocus = true;
                 }
 
                 // If this is an active non-popup, inform any subsequent
@@ -107,6 +122,23 @@ public class ScreenManager : DrawableGameComponent
         }
 
         base.Update(gameTime); // @QUESTION: do I need to call this?
+
+        if (m_TraceEnabled) // Print debug trace?
+            TraceScreens();
+    }
+
+
+    /// <summary>
+    /// Prints a list of all the screens, for debugging.
+    /// </summary>
+    private void TraceScreens()
+    {
+        List<string> screenNames = new List<string>();
+
+        foreach (AbstractScreen screen in m_Screens)
+            screenNames.Add(screen.GetType().Name);
+
+        Debug.WriteLine(string.Join(", ", screenNames.ToArray()));
     }
 
     public override void Draw(GameTime gameTime)
@@ -129,27 +161,67 @@ public class ScreenManager : DrawableGameComponent
         return m_Screens.ToArray();
     }
 
-    public void RemoveScreenWithTransition(AbstractScreen screen, Action onTransitionEnded)
+    // public void RemoveScreenWithTransition(AbstractScreen screen, Action onTransitionEnded = null)
+    // {
+    //     // screen animation
+    //     m_Screens.Remove(screen);
+    //     onTransitionEnded?.Invoke();
+    // }
+    // public void AddScreenWithTransition(AbstractScreen screen, Action onTransitionEnded = null)
+    // {
+    //     m_Screens.Add(screen);
+    //     screen.Load();
+    //     // screen animation
+    //     onTransitionEnded?.Invoke();
+    // }
+
+    public static void RemoveAllScreens()
     {
-        // screen animation
-        m_Screens.Remove(screen);
-        onTransitionEnded?.Invoke();
+        m_Instance.m_Screens.Clear();
+    }
+    public static void AddScreen(params AbstractScreen[] screens)
+    {
+        m_Instance.m_Screens.AddRange(screens);
+        for (int i = 0; i < screens.Length; i++)
+            screens[i].Load();
     }
 
-    public void AddScreenWithTransition(AbstractScreen screen)
-    {
-        m_Screens.Add(screen);
-        screen.Load();
-        // screen animation
-    }
+    // public GameScreen InstantiateGameScreen()
+    // {
+    //     return new GameScreen(this, m_SharedSpriteBatch);
+    // }
 
-    public GameScreen InstantiateGameScreen()
-    {
-        return new GameScreen(this, m_SharedSpriteBatch);
-    }
+    // public StartScreen InstantiateStartScreen()
+    // {
+    //     return new StartScreen(this);
+    // }
 
-    public StartScreen InstantiateStartScreen()
+    // public HudScreen InstantiateHudScreen()
+    // {
+    //     return new HudScreen(this);
+    // }
+
+    // #region Screen Calls
+    // public void OpenGameplay()
+    // {
+    //     AddScreenWithTransition(InstantiateGameScreen());
+    // }
+    // #endregion
+
+    /// <summary>
+    /// Helper draws a translucent black fullscreen sprite, used for fading
+    /// screens in and out, and for darkening the background behind popups.
+    /// </summary>
+    public void FadeBackBufferToBlack(float alpha)
     {
-        return new StartScreen(this);
+        Viewport viewport = GraphicsDevice.Viewport;
+
+        m_SharedSpriteBatch.Begin();
+
+        m_SharedSpriteBatch.Draw(m_BlankTexture,
+                         new Rectangle(0, 0, viewport.Width, viewport.Height),
+                         Color.Black * alpha);
+
+        m_SharedSpriteBatch.End();
     }
 }

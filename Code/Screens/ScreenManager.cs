@@ -50,9 +50,9 @@ public class ScreenManager : DrawableGameComponent
         m_Instance = this;
 
         // applying screen size
-        game.Graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
-        game.Graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
-        game.Graphics.ApplyChanges();
+        GameStartup.Graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
+        GameStartup.Graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
+        GameStartup.Graphics.ApplyChanges();
 
         game.IsMouseVisible = true;
 

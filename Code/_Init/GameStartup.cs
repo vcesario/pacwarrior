@@ -13,12 +13,13 @@ public class GameStartup : Game
 {
     private static GameStartup m_StaticReference;
 
-    public GraphicsDeviceManager Graphics
+    public static GraphicsDeviceManager Graphics
     { get; private set; }
 
     private ScreenManager m_ScreenManager;
 
     public static ContentManager ContentManager => m_StaticReference.Content;
+    public static GameWindow GameWindow => m_StaticReference.Window;
 
     private bool m_F1Pressed;
     public static bool DebugEnabled { get; private set; }

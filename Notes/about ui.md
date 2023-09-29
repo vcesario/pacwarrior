@@ -19,3 +19,11 @@ existem varias formas de sair de uma mesma screen?
     sim. uma popup pode ir pra uma proxima tela, ou voltar pra tela anterior
 
 ScreenManager.AddScreen(new Screen())
+
+-----------
+
+que informacoes eu quero na hud?
+- player life: 0
+- score: 000
+- draw fps: 000
+- match time: 00:00

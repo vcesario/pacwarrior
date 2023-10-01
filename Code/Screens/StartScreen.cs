@@ -9,7 +9,6 @@ namespace topdown1;
 
 public class StartScreen : AbstractScreen
 {
-    private FontSystem m_Font_OpenSansBold;
     private SpriteFontBase m_TitleSpriteFont;
     private string m_TitleLine1 = "PAC";
     private string m_TitleLine2 = "WARRIOR";
@@ -17,7 +16,6 @@ public class StartScreen : AbstractScreen
     private Vector2 m_TitleLine1Pivot;
     private Vector2 m_TitleLine2Pivot;
 
-    private FontSystem m_Font_OpenSans;
     private SpriteFontBase m_CaptionSpriteFont;
     private string m_Caption = "Press space to play";
     private Vector2 m_CaptionScreenPosition;
@@ -26,17 +24,13 @@ public class StartScreen : AbstractScreen
     public override void Load()
     {
         // title
-        m_Font_OpenSansBold = new FontSystem();
-        m_Font_OpenSansBold.AddFont(File.ReadAllBytes("Assets/Fonts/OpenSans-Bold.ttf")); // @QUESTION: put '@' before string?
-        m_TitleSpriteFont = m_Font_OpenSansBold.GetFont(72);
+        m_TitleSpriteFont = GameText.Font_OpenSansBold.GetFont(72);
         m_TitleScreenPosition = new Vector2(GameStartup.GameWindow.ClientBounds.Width / 2f, GameStartup.GameWindow.ClientBounds.Height / 3f);
         m_TitleLine1Pivot = m_TitleSpriteFont.MeasureString(m_TitleLine1) / 2f;
         m_TitleLine2Pivot = m_TitleSpriteFont.MeasureString(m_TitleLine2) / 2f;
 
         // caption
-        m_Font_OpenSans = new FontSystem();
-        m_Font_OpenSans.AddFont(File.ReadAllBytes("Assets/Fonts/OpenSans-Regular.ttf"));
-        m_CaptionSpriteFont = m_Font_OpenSans.GetFont(26);
+        m_CaptionSpriteFont = GameText.Font_OpenSans.GetFont(26);
         m_CaptionScreenPosition = new Vector2(GameStartup.GameWindow.ClientBounds.Width / 2f, GameStartup.GameWindow.ClientBounds.Height / 1.25f);
         m_CaptionPivot = m_CaptionSpriteFont.MeasureString(m_Caption) / 2f;
     }

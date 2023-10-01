@@ -18,6 +18,8 @@ public class GameScreen : AbstractScreen
 
     private Player m_Player;
 
+    public static DateTime RoundStartTime { get; private set; }
+
     public GameScreen(SpriteBatch spriteBatch)
     {
         m_SpriteBatch = spriteBatch;
@@ -37,6 +39,9 @@ public class GameScreen : AbstractScreen
 
         // initialize enemies
         GhostManager.Initialize();
+
+        // set start time
+        RoundStartTime = DateTime.Now;
     }
 
     public override bool HandleInput(GameTime gameTime, InputState input)

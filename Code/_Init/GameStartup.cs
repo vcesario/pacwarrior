@@ -38,6 +38,8 @@ public class GameStartup : Game
         Components.Add(m_ScreenManager);
 
         RandomGenerator = new Random();
+
+        GameText.Initialize();
     }
 
     // protected override void Initialize()
@@ -63,7 +65,7 @@ public class GameStartup : Game
 
             DebugEnabled = !DebugEnabled;
             if (DebugEnabled)
-                Console.WriteLine("Debug Enabled!");
+                Console.WriteLine("Debug enabled!");
             else
                 Console.WriteLine("Debug disabled.");
         }

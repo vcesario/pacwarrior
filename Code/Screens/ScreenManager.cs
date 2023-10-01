@@ -56,7 +56,7 @@ public class ScreenManager : DrawableGameComponent
 
         game.IsMouseVisible = true;
 
-        m_Input = new InputState();
+        m_Input = new InputState(); // @TODO: think if this should be here
         m_Screens = new List<AbstractScreen>();
         m_TempScreensList = new List<AbstractScreen>();
     }
@@ -74,8 +74,8 @@ public class ScreenManager : DrawableGameComponent
         m_BlankTexture.SetData(new[] { Color.White });
 
         // first screen
-        AddScreen(new StartScreen()); // <-- original
-        // AddScreen(new GameScreen(m_SharedSpriteBatch), new HudScreen()); // <-- debug
+        // AddScreen(new StartScreen()); // <-- original
+        AddScreen(new GameScreen(m_SharedSpriteBatch), new HudScreen()); // <-- debug
 
         base.LoadContent();
     }

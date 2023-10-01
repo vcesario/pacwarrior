@@ -12,7 +12,7 @@
 - [x] player object walking over map
 - [x] player x wall collisions
 - [x] ghosts walking on map, respecting collisions
-- [] hud: basic UI layers, font rendering
+- [x] hud: basic UI layers, font rendering
 - [] pause screen
 - [] player lose condition: player x ghost collission, player life points zeroed, game over screen (bad)
 - [] player win condition: collect all coins, game over screen (good)

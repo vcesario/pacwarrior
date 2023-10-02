@@ -26,6 +26,12 @@ public static class InputState
             case InputCommands.LEFT:
                 return (m_CurrentKeyboardState.IsKeyDown(Keys.Left) && m_LastKeyboardState.IsKeyUp(Keys.Left))
                         || (m_CurrentKeyboardState.IsKeyDown(Keys.A) && m_LastKeyboardState.IsKeyUp(Keys.A));
+            case InputCommands.RIGHT:
+                return (m_CurrentKeyboardState.IsKeyDown(Keys.Right) && m_LastKeyboardState.IsKeyUp(Keys.Right))
+                        || (m_CurrentKeyboardState.IsKeyDown(Keys.D) && m_LastKeyboardState.IsKeyUp(Keys.D));
+            case InputCommands.DOWN:
+                return (m_CurrentKeyboardState.IsKeyDown(Keys.Down) && m_LastKeyboardState.IsKeyUp(Keys.Down))
+                        || (m_CurrentKeyboardState.IsKeyDown(Keys.S) && m_LastKeyboardState.IsKeyUp(Keys.S));
 
             case InputCommands.UI_SUBMIT:
                 return m_CurrentKeyboardState.IsKeyDown(Keys.Space) && m_LastKeyboardState.IsKeyUp(Keys.Space);
@@ -48,6 +54,10 @@ public static class InputState
                 return m_CurrentKeyboardState.IsKeyDown(Keys.Up) || m_CurrentKeyboardState.IsKeyDown(Keys.W);
             case InputCommands.LEFT:
                 return m_CurrentKeyboardState.IsKeyDown(Keys.Left) || m_CurrentKeyboardState.IsKeyDown(Keys.A);
+            case InputCommands.RIGHT:
+                return m_CurrentKeyboardState.IsKeyDown(Keys.Right) || m_CurrentKeyboardState.IsKeyDown(Keys.D);
+            case InputCommands.DOWN:
+                return m_CurrentKeyboardState.IsKeyDown(Keys.Down) || m_CurrentKeyboardState.IsKeyDown(Keys.S);
 
             case InputCommands.UI_SUBMIT:
                 return m_CurrentKeyboardState.IsKeyDown(Keys.Space);
@@ -72,6 +82,12 @@ public static class InputState
             case InputCommands.LEFT:
                 return (m_CurrentKeyboardState.IsKeyUp(Keys.Left) && m_LastKeyboardState.IsKeyDown(Keys.Left))
                         || (m_CurrentKeyboardState.IsKeyUp(Keys.A) && m_LastKeyboardState.IsKeyDown(Keys.A));
+            case InputCommands.RIGHT:
+                return (m_CurrentKeyboardState.IsKeyUp(Keys.Right) && m_LastKeyboardState.IsKeyDown(Keys.Right))
+                        || (m_CurrentKeyboardState.IsKeyUp(Keys.D) && m_LastKeyboardState.IsKeyDown(Keys.D));
+            case InputCommands.DOWN:
+                return (m_CurrentKeyboardState.IsKeyUp(Keys.Down) && m_LastKeyboardState.IsKeyDown(Keys.Down))
+                        || (m_CurrentKeyboardState.IsKeyUp(Keys.S) && m_LastKeyboardState.IsKeyDown(Keys.S));
 
             case InputCommands.UI_SUBMIT:
                 return m_CurrentKeyboardState.IsKeyUp(Keys.Space) && m_LastKeyboardState.IsKeyDown(Keys.Space);

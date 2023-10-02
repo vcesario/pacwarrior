@@ -14,7 +14,7 @@
 - [x] ghosts walking on map, respecting collisions
 - [x] hud: basic UI layers, font rendering
 - [x] pause screen
-- [] input management
+- [x] input management
 - [] player lose condition: player x ghost collission, player life points zeroed, game over screen (bad)
 - [] player win condition: collect all coins, game over screen (good)
 - [] ghost ai

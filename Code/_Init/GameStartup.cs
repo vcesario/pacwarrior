@@ -21,7 +21,6 @@ public class GameStartup : Game
     public static ContentManager ContentManager => m_StaticReference.Content;
     public static GameWindow GameWindow => m_StaticReference.Window;
 
-    private bool m_F1Pressed;
     public static bool DebugEnabled { get; private set; }
 
     public static Random RandomGenerator { get; private set; }
@@ -54,24 +53,18 @@ public class GameStartup : Game
 
     protected override void Update(GameTime gameTime)
     {
-        KeyboardState keyboardState = Keyboard.GetState();
-        if (/*GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || */
-        keyboardState.IsKeyDown(Keys.Escape))
+        InputState.Update(gameTime);
+
+        if (InputState.GetPressed(InputCommands.UI_EXIT))
             Exit();
 
-        if (!m_F1Pressed && keyboardState.IsKeyDown(Keys.F1))
+        if (InputState.GetPressed(InputCommands.DEBUG_1))
         {
-            m_F1Pressed = true;
-
             DebugEnabled = !DebugEnabled;
             if (DebugEnabled)
                 Console.WriteLine("Debug enabled!");
             else
                 Console.WriteLine("Debug disabled.");
-        }
-        if (m_F1Pressed && keyboardState.IsKeyUp(Keys.F1))
-        {
-            m_F1Pressed = false;
         }
 
         // update logic here

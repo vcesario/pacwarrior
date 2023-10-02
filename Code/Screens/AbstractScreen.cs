@@ -13,10 +13,10 @@ public abstract class AbstractScreen
     public abstract void Load();
 
     /// <summary>
-    /// Does something with the current input state.
+    /// Pretty self explanatory.
     /// </summary>
     /// <returns><c>True</c> if I want this screen to prevent input from passing through. <c>False</c> if I don't.</returns>
-    public abstract bool HandleInput(GameTime gameTime, InputState input);
+    public abstract bool HandleInput(GameTime gameTime);
     public abstract void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen);
 
     /// <summary>

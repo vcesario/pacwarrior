@@ -7,29 +7,28 @@ namespace topdown1;
 
 public class HudScreen : AbstractScreen
 {
-    private SpriteFontBase m_HudInfoSpriteFont;
-    private Vector2 m_HudInfoPosition;
-    private string m_HudInfoText;
+    private SpriteFontBase m_HudInfoFont;
+    private Vector2 m_HudInfoScreenPosition;
+    private string m_HudInfo;
 
     public override void Load()
     {
-        m_HudInfoSpriteFont = GameText.Font_OpenSans.GetFont(18);
-        m_HudInfoPosition = new Vector2(10, 10);
+        m_HudInfoFont = GameText.Font_OpenSans.GetFont(18);
+        m_HudInfoScreenPosition = new Vector2(10, 10);
     }
 
-    public override bool HandleInput(GameTime gameTime, InputState input)
+    public override bool HandleInput(GameTime gameTime)
     {
         return false;
     }
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
     {
-        m_HudInfoText = "LIVES: 0";
+        m_HudInfo = "LIVES: 0";
 
-        m_HudInfoText += "\nSCORE: 000";
+        m_HudInfo += "\nSCORE: 000";
 
-        TimeSpan matchLength = DateTime.Now - GameScreen.RoundStartTime;
-        m_HudInfoText += $"\nTIME: {matchLength.ToString(@"mm\:ss")}";
+        m_HudInfo += $"\nTIME: {GameScreen.RoundDuration.ToString(@"mm\:ss")}";
     }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -37,9 +36,9 @@ public class HudScreen : AbstractScreen
         if (GameStartup.DebugEnabled)
         {
             FPSCounter.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-            m_HudInfoText += $"\n\nFPS: {FPSCounter.AverageFramesPerSecond}s";
+            m_HudInfo += $"\n\nFPS: {FPSCounter.AverageFramesPerSecond}s";
         }
 
-        spriteBatch.DrawString(m_HudInfoSpriteFont, m_HudInfoText, m_HudInfoPosition, Color.White);
+        spriteBatch.DrawString(m_HudInfoFont, m_HudInfo, m_HudInfoScreenPosition, Color.White);
     }
 }

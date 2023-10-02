@@ -13,7 +13,8 @@
 - [x] player x wall collisions
 - [x] ghosts walking on map, respecting collisions
 - [x] hud: basic UI layers, font rendering
-- [] pause screen
+- [x] pause screen
+- [] input management
 - [] player lose condition: player x ghost collission, player life points zeroed, game over screen (bad)
 - [] player win condition: collect all coins, game over screen (good)
 - [] ghost ai
@@ -36,6 +37,7 @@
 #### RELEASE
 
 - [] build
+- [] gamepad support
 
 #### NEXT PROJECTS
 

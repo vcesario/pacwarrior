@@ -14,16 +14,11 @@ public class GameScreen : AbstractScreen
 {
     private LDtkWorld m_World;
     private List<LDtkLevel> m_LevelList;
-    private SpriteBatch m_SpriteBatch;
 
     private Player m_Player;
 
-    public static DateTime RoundStartTime { get; private set; }
-
-    public GameScreen(SpriteBatch spriteBatch)
-    {
-        m_SpriteBatch = spriteBatch;
-    }
+    public static TimeSpan RoundDuration { get; private set; }
+    public bool m_IsPaused;
 
     public override void Load()
     {
@@ -31,7 +26,7 @@ public class GameScreen : AbstractScreen
         m_World = file.LoadWorld(new Guid("9b923070-3b70-11ee-9cfe-037a95b3620d"));
 
         m_LevelList = new List<LDtkLevel>(m_World.Levels);
-        MapGrid.Initialize(m_LevelList[0], new LDtkRenderer(m_SpriteBatch));
+        MapGrid.Initialize(m_LevelList[0], new LDtkRenderer(ScreenManager.SharedSpriteBatch));
 
         // create player
         var playerEntity = m_World.GetEntity<PlayerEntity>();
@@ -41,33 +36,33 @@ public class GameScreen : AbstractScreen
         GhostManager.Initialize();
 
         // set start time
-        RoundStartTime = DateTime.Now;
+        RoundDuration = TimeSpan.Zero;
     }
 
-    public override bool HandleInput(GameTime gameTime, InputState input)
+    public override bool HandleInput(GameTime gameTime)
     {
         KeyboardState keyboardState = Keyboard.GetState();
-        if (keyboardState.IsKeyDown(Keys.Enter))
+        if (InputState.GetPressed(InputCommands.UI_SUBMIT))
         {
-            GoToStartScene();
+            PauseGame();
         }
 
         // move player
         Vector2 resultMovement = Vector2.Zero;
-        if (keyboardState.IsKeyDown(Keys.A))
+        if (InputState.GetPressing(InputCommands.LEFT))
         {
             resultMovement += Vector2.UnitX * -1;
         }
-        else if (keyboardState.IsKeyDown(Keys.D))
+        else if (InputState.GetPressing(InputCommands.RIGHT))
         {
             resultMovement += Vector2.UnitX;
         }
 
-        if (keyboardState.IsKeyDown(Keys.W))
+        if (InputState.GetPressing(InputCommands.UP))
         {
             resultMovement += Vector2.UnitY * -1;
         }
-        else if (keyboardState.IsKeyDown(Keys.S))
+        else if (InputState.GetPressing(InputCommands.DOWN))
         {
             resultMovement += Vector2.UnitY;
         }
@@ -79,6 +74,11 @@ public class GameScreen : AbstractScreen
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
     {
+        if (m_IsPaused)
+            return;
+
+        RoundDuration += gameTime.ElapsedGameTime;
+
         GhostManager.UpdateBrain(gameTime);
     }
 
@@ -97,5 +97,19 @@ public class GameScreen : AbstractScreen
 
         ScreenManager.RemoveAllScreens();
         ScreenManager.AddScreen(new StartScreen());
+    }
+
+    private void PauseGame()
+    {
+        m_IsPaused = true;
+
+        PauseScreen pauseScreen = new PauseScreen();
+        pauseScreen.EventUnpaused += OnGameUnpaused;
+        ScreenManager.AddScreen(pauseScreen);
+    }
+
+    private void OnGameUnpaused()
+    {
+        m_IsPaused = false;
     }
 }

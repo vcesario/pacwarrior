@@ -29,8 +29,6 @@ public class ScreenManager : DrawableGameComponent
     public const int SCREEN_HEIGHT = _ScreenHeightInTiles * _TileSize;
     // **
 
-    private InputState m_Input;
-
     private SpriteBatch m_SharedSpriteBatch;
     public static SpriteBatch SharedSpriteBatch => m_Instance.m_SharedSpriteBatch;
 
@@ -56,7 +54,6 @@ public class ScreenManager : DrawableGameComponent
 
         game.IsMouseVisible = true;
 
-        m_Input = new InputState(); // @TODO: think if this should be here
         m_Screens = new List<AbstractScreen>();
         m_TempScreensList = new List<AbstractScreen>();
     }
@@ -74,8 +71,8 @@ public class ScreenManager : DrawableGameComponent
         m_BlankTexture.SetData(new[] { Color.White });
 
         // first screen
-        // AddScreen(new StartScreen()); // <-- original
-        AddScreen(new GameScreen(m_SharedSpriteBatch), new HudScreen()); // <-- debug
+        AddScreen(new StartScreen()); // <-- original
+        // AddScreen(new GameScreen(m_SharedSpriteBatch), new HudScreen()); // <-- debug
 
         base.LoadContent();
     }
@@ -110,7 +107,7 @@ public class ScreenManager : DrawableGameComponent
                 // give it a chance to handle input.
                 if (!otherScreenHasFocus)
                 {
-                    if (screen.HandleInput(gameTime, m_Input))
+                    if (screen.HandleInput(gameTime))
                         otherScreenHasFocus = true;
                 }
 
@@ -186,6 +183,19 @@ public class ScreenManager : DrawableGameComponent
             screens[i].Load();
     }
 
+    public static void RemoveScreen(Type screenType)
+    {
+        bool found = false;
+        for (int i = m_Instance.m_Screens.Count - 1; i >= 0 && !found; i--)
+        {
+            if (m_Instance.m_Screens[i].GetType() == screenType)
+            {
+                m_Instance.m_Screens.RemoveAt(i);
+                found = true;
+            }
+        }
+    }
+
     // public GameScreen InstantiateGameScreen()
     // {
     //     return new GameScreen(this, m_SharedSpriteBatch);
@@ -212,16 +222,10 @@ public class ScreenManager : DrawableGameComponent
     /// Helper draws a translucent black fullscreen sprite, used for fading
     /// screens in and out, and for darkening the background behind popups.
     /// </summary>
-    public void FadeBackBufferToBlack(float alpha)
+    public static void FadeBackBufferToBlack(float alpha)
     {
-        Viewport viewport = GraphicsDevice.Viewport;
-
-        m_SharedSpriteBatch.Begin();
-
-        m_SharedSpriteBatch.Draw(m_BlankTexture,
-                         new Rectangle(0, 0, viewport.Width, viewport.Height),
+        SharedSpriteBatch.Draw(m_Instance.m_BlankTexture,
+                         new Rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
                          Color.Black * alpha);
-
-        m_SharedSpriteBatch.End();
     }
 }

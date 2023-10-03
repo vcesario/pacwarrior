@@ -8,12 +8,15 @@ namespace topdown1;
 public static class GhostManager
 {
     private static List<Ghost> m_Ghosts;
+    public static IEnumerable<Ghost> Ghosts => m_Ghosts;
     private static Tuple<Point, Point>[] m_GhostMoveCoords;
 
-    private static bool m_IsMoving;
     private static float m_GhostSpeed = 100;
     private static float m_MovementDuration;
-    private static double m_MovementStartTime;
+    private static TimeSpan m_MovementStartTime;
+
+    // ghost view range = 100 (circle radius)
+    // 
 
 
     public static void Initialize()
@@ -32,7 +35,7 @@ public static class GhostManager
 
         // instantiate n ghosts
         m_Ghosts = new List<Ghost>();
-        int initialGhostAmount = 3;
+        int initialGhostAmount = 10;
         for (int i = 0; i < initialGhostAmount; i++)
         {
             Ghost newGhost = new Ghost(MapGrid.GridCoordinateToPosition(walkables[i]));
@@ -42,69 +45,65 @@ public static class GhostManager
 
         // ** calculate movement duration
         m_MovementDuration = MapGrid.TileSize / m_GhostSpeed; // approximate formula to match player's
-        // the right formula would be the following (calculated at every frame)
+        // the correct formula would be the following (calculated at every frame)
         //              m_MovementDuration = (MapGrid.TileSize / (m_GhostSpeed * frameDuration)) * frameDuration;
         // also fractioned values would have to be stored, meaning that more than one "next coordinate" would have
         // to be calculated ahead of time to prevent movement stuttering... and probably other stuff, but I decided
         // not to think about it :)
         // **
 
-        m_IsMoving = false;
+        CalculateNextMovement();
     }
 
-    public static void UpdateBrain(GameTime gameTime)
+    public static void UpdateBrain()
     {
-        if (m_IsMoving)
+        // move ghosts
+        float elapsedTime = (float)(GameScreen.RoundDuration - m_MovementStartTime).TotalSeconds;
+        float elapsedPercent = elapsedTime / m_MovementDuration;
+
+        if (elapsedPercent >= 1)
         {
-            // move ghosts
-            float elapsedTime = (float)(gameTime.TotalGameTime.TotalSeconds - m_MovementStartTime);
-            float elapsedPercent = elapsedTime / m_MovementDuration;
+            for (int i = 0; i < m_Ghosts.Count; i++)
+                m_Ghosts[i].SetPosition(m_GhostMoveCoords[i].Item2);
 
-            if (elapsedPercent >= 1)
-            {
-                for (int i = 0; i < m_Ghosts.Count; i++)
-                    m_Ghosts[i].SetPosition(m_GhostMoveCoords[i].Item2);
-
-                m_IsMoving = false;
-            }
-            else
-            {
-                for (int i = 0; i < m_Ghosts.Count; i++)
-                {
-                    Vector2 newPosition = Vector2.Lerp(m_GhostMoveCoords[i].Item1.ToVector2(), m_GhostMoveCoords[i].Item2.ToVector2(), elapsedPercent);
-                    m_Ghosts[i].SetPosition(newPosition.ToPoint());
-                }
-            }
+            CalculateNextMovement();
+            m_MovementStartTime = GameScreen.RoundDuration;
         }
         else
         {
-            // calculate next movement
-            if (m_GhostMoveCoords.Length != m_Ghosts.Count)
-                m_GhostMoveCoords = new Tuple<Point, Point>[m_Ghosts.Count];
-
+            // move all ghosts
             for (int i = 0; i < m_Ghosts.Count; i++)
             {
-                Point gridCoordinate = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
-                Direction4 direction = m_Ghosts[i].CurrentDirection;
-
-                // calculate distance from player
-                // ...
-
-                if (/**/true) // if distance large enough, make ghost roam
-                {
-                    GetRoamCoord(gridCoordinate, direction, out Point nextCoordinate, out Direction4 nextDirection);
-                    m_Ghosts[i].SetDirection(nextDirection);
-                    m_GhostMoveCoords[i] = new Tuple<Point, Point>(m_Ghosts[i].Position, MapGrid.GridCoordinateToPosition(nextCoordinate));
-                }
-                else // else, make ghost chase player
-                {
-                    Point nextCoordinate = GetChaseCoord();
-                    m_GhostMoveCoords[i] = new Tuple<Point, Point>(m_Ghosts[i].Position, MapGrid.GridCoordinateToPosition(nextCoordinate));
-                }
+                Vector2 newPosition = Vector2.Lerp(m_GhostMoveCoords[i].Item1.ToVector2(), m_GhostMoveCoords[i].Item2.ToVector2(), elapsedPercent);
+                m_Ghosts[i].SetPosition(newPosition.ToPoint());
             }
+        }
+    }
 
-            m_MovementStartTime = gameTime.TotalGameTime.TotalSeconds;
-            m_IsMoving = true;
+    private static void CalculateNextMovement()
+    {
+        if (m_GhostMoveCoords.Length != m_Ghosts.Count)
+            m_GhostMoveCoords = new Tuple<Point, Point>[m_Ghosts.Count];
+
+        for (int i = 0; i < m_Ghosts.Count; i++)
+        {
+            Point gridCoordinate = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
+            Direction4 direction = m_Ghosts[i].CurrentDirection;
+
+            // calculate distance from player
+            // ...
+
+            if (/**/true) // if distance large enough, make ghost roam
+            {
+                GetRoamCoord(gridCoordinate, direction, out Point nextCoordinate, out Direction4 nextDirection);
+                m_Ghosts[i].SetDirection(nextDirection);
+                m_GhostMoveCoords[i] = new Tuple<Point, Point>(m_Ghosts[i].Position, MapGrid.GridCoordinateToPosition(nextCoordinate));
+            }
+            else // else, make ghost chase player
+            {
+                Point nextCoordinate = GetChaseCoord();
+                m_GhostMoveCoords[i] = new Tuple<Point, Point>(m_Ghosts[i].Position, MapGrid.GridCoordinateToPosition(nextCoordinate));
+            }
         }
     }
 

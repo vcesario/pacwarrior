@@ -37,37 +37,23 @@ public class GameScreen : AbstractScreen
 
         // set start time
         RoundDuration = TimeSpan.Zero;
+
+        // if there's an intro, initial pause to wait for intro to end
+        if (ScreenManager.IsScreenOpen<RoundIntroScreen>())
+        {
+            m_IsPaused = true;
+            ScreenManager.GetScreen<RoundIntroScreen>().EventClosed += StartGame;
+        }
     }
 
     public override bool HandleInput(GameTime gameTime)
     {
-        KeyboardState keyboardState = Keyboard.GetState();
         if (InputState.GetPressed(InputCommands.UI_SUBMIT))
         {
             PauseGame();
         }
 
-        // move player
-        Vector2 resultMovement = Vector2.Zero;
-        if (InputState.GetPressing(InputCommands.LEFT))
-        {
-            resultMovement += Vector2.UnitX * -1;
-        }
-        else if (InputState.GetPressing(InputCommands.RIGHT))
-        {
-            resultMovement += Vector2.UnitX;
-        }
-
-        if (InputState.GetPressing(InputCommands.UP))
-        {
-            resultMovement += Vector2.UnitY * -1;
-        }
-        else if (InputState.GetPressing(InputCommands.DOWN))
-        {
-            resultMovement += Vector2.UnitY;
-        }
-
-        m_Player.Move(resultMovement, gameTime.ElapsedGameTime.TotalSeconds);
+        m_Player.State.ProcessInput(gameTime);
 
         return true;
     }
@@ -79,7 +65,9 @@ public class GameScreen : AbstractScreen
 
         RoundDuration += gameTime.ElapsedGameTime;
 
-        GhostManager.UpdateBrain(gameTime);
+        GhostManager.UpdateBrain();
+
+        m_Player.State.Update(gameTime);
     }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -91,12 +79,13 @@ public class GameScreen : AbstractScreen
         m_Player.Draw(spriteBatch);
     }
 
-    private void GoToStartScene()
+    private void StartGame()
     {
-        Console.WriteLine("Going to Start scene...");
+        UnpauseGame();
+        ScreenManager.AddScreen(new HudScreen());
 
-        ScreenManager.RemoveAllScreens();
-        ScreenManager.AddScreen(new StartScreen());
+        // instantiate coins
+        // set player state to playing
     }
 
     private void PauseGame()
@@ -104,12 +93,17 @@ public class GameScreen : AbstractScreen
         m_IsPaused = true;
 
         PauseScreen pauseScreen = new PauseScreen();
-        pauseScreen.EventUnpaused += OnGameUnpaused;
+        pauseScreen.EventUnpaused += UnpauseGame;
         ScreenManager.AddScreen(pauseScreen);
     }
 
-    private void OnGameUnpaused()
+    private void UnpauseGame()
     {
         m_IsPaused = false;
+    }
+
+    public void EndGame()
+    {
+
     }
 }

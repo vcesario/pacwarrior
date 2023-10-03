@@ -17,8 +17,14 @@ public class Player
     private float m_PlayerSpeed;
     private Texture2D m_Tex;
 
+    private Point m_StartingPosition;
+
+    public PlayerState State { get; private set; }
+
     public Player(PlayerEntity entity)
     {
+        m_StartingPosition = entity.Position.ToPoint();
+
         m_TexBox = new BoundingBox((int)entity.Position.X, (int)entity.Position.Y, 16, 16);
 
         m_ColliderSize = new Point(11, 11);
@@ -26,6 +32,8 @@ public class Player
 
         m_PlayerSpeed = 150f;
         m_Tex = TextureManager.CharacterTex;
+
+        State = new PlayerState_Default(this);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -140,12 +148,25 @@ public class Player
         }
     }
 
-    private BoundingBox GetColliderBox()
+    public BoundingBox GetColliderBox()
     {
         // get colliders' top left
         int x = m_TexBox.Left + (int)(m_TexBox.HalfWidth - m_ColliderSizeHalf.X);
         int y = m_TexBox.Top + (int)(m_TexBox.HalfHeight - m_ColliderSizeHalf.Y);
 
         return new BoundingBox(x, y, m_ColliderSize.X, m_ColliderSize.Y);
+    }
+
+    public void SetState(PlayerState newState)
+    {
+        State.Exit();
+        State = newState;
+        State.Enter();
+    }
+
+    public void ReturnToStartPosition()
+    {
+        m_TexBox.Top = m_StartingPosition.Y;
+        m_TexBox.Left = m_StartingPosition.X;
     }
 }

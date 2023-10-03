@@ -22,6 +22,11 @@ public class Ghost
     public void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(m_Tex, new Vector2(m_TexBox.Left, m_TexBox.Top), TextureManager.GhostTexSourceRect, Color.White);
+
+        if (GameStartup.DebugEnabled)
+        {
+            spriteBatch.DrawRectangle(m_TexBox.Rect, Color.MediumPurple);
+        }
     }
 
     public void SetPosition(Point position)
@@ -33,5 +38,10 @@ public class Ghost
     public void SetDirection(Direction4 direction)
     {
         CurrentDirection = direction;
+    }
+
+    public BoundingBox GetColliderBox()
+    {
+        return m_TexBox; // @TODO: add a proper hit box maybe, instead of the graphics one
     }
 }

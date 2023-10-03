@@ -11,10 +11,12 @@ public struct BoundingBox
     public float HalfWidth;
     public float HalfHeight;
 
+    public int Right => Left + Width - 1;
+    public int Bottom => Top + Height - 1;
     public Point TopLeft => new Point(Left, Top);
-    public Point TopRight => new Point(Left + Width - 1, Top);
-    public Point BottomLeft => new Point(Left, Top + Height - 1);
-    public Point BottomRight => new Point(Left + Width - 1, Top + Height - 1);
+    public Point TopRight => new Point(Right, Top);
+    public Point BottomLeft => new Point(Left, Bottom);
+    public Point BottomRight => new Point(Right, Bottom);
     public Point CenterPosition
     {
         get
@@ -35,5 +37,11 @@ public struct BoundingBox
         Height = height;
         HalfWidth = width * 0.5f;
         HalfHeight = height * 0.5f;
+    }
+
+    public bool IsOverlapping(BoundingBox otherBox)
+    {
+        return Right >= otherBox.Left && Left <= otherBox.Right
+        && Bottom >= otherBox.Top && Top <= otherBox.Bottom;
     }
 }

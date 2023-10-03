@@ -44,8 +44,7 @@ public class PauseScreen : AbstractScreen
 
     private void Unpause()
     {
-        ScreenManager.RemoveScreen(GetType());
-        // @TODO: transition before invoke to prevent getting caught up on input loops
+        ScreenManager.RemoveScreen<PauseScreen>();
         EventUnpaused?.Invoke();
     }
 }

@@ -153,9 +153,20 @@ public class ScreenManager : DrawableGameComponent
         base.Draw(gameTime); // @QUESTION: do I need to call this?
     }
 
-    public AbstractScreen[] GetScreens()
+    public static AbstractScreen[] GetScreens()
     {
-        return m_Screens.ToArray();
+        return m_Instance.m_Screens.ToArray();
+    }
+
+    public static bool IsScreenOpen<T>() where T : AbstractScreen
+    {
+        return m_Instance.m_Screens.Find(_screen => _screen is T) != null;
+    }
+
+    public static T GetScreen<T>() where T : AbstractScreen
+    {
+        T screen = (T)m_Instance.m_Screens.Find(_screen => _screen is T);
+        return screen;
     }
 
     // public void RemoveScreenWithTransition(AbstractScreen screen, Action onTransitionEnded = null)
@@ -176,19 +187,23 @@ public class ScreenManager : DrawableGameComponent
     {
         m_Instance.m_Screens.Clear();
     }
-    public static void AddScreen(params AbstractScreen[] screens)
+
+    /// <summary>
+    /// This method must not be called from another AbstractScreen's <c>Load()</c> method.
+    /// </summary>
+    public static void AddScreen(params AbstractScreen[] newScreens)
     {
-        m_Instance.m_Screens.AddRange(screens);
-        for (int i = 0; i < screens.Length; i++)
-            screens[i].Load();
+        m_Instance.m_Screens.AddRange(newScreens);
+        for (int i = 0; i < newScreens.Length; i++)
+            newScreens[i].Load();
     }
 
-    public static void RemoveScreen(Type screenType)
+    public static void RemoveScreen<T>() where T : AbstractScreen
     {
         bool found = false;
         for (int i = m_Instance.m_Screens.Count - 1; i >= 0 && !found; i--)
         {
-            if (m_Instance.m_Screens[i].GetType() == screenType)
+            if (m_Instance.m_Screens[i].GetType() == typeof(T))
             {
                 m_Instance.m_Screens.RemoveAt(i);
                 found = true;

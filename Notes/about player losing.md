@@ -8,6 +8,8 @@ maquina de estado pro guerreiro? =>
     - Powered: recebe input para andar e pausar jogo, anda batendo, coleta coisas, é detectavel pelos fantasmas mas eles fogem, relogio avança normal
     - Dying: recebe input para pausar jogo, fantasmas nao detectam, nao coleta nada, relogio nao avança
     - Spawning: recebe input para andar e pausar, fantasmas nao detectam, coleta coisas, relogio avança
+    
+    (acho q nao preciso dos estados abaixo)
     - Intro: nao recebe input de andar nem de pausar, fantasmas nao detectam (tanto faz), nao coleta nada (tanto faz), relogio nao avança
     - GameOver: recebe input para voltar a tela de titulo, fantasmas nao detectam, nao coleta nada, relogio nao avança
 
@@ -16,3 +18,9 @@ talvez faria mais sentido se o jogo tivesse seus proprios estados?
     - Intro: introduzindo o jogo, relogio nao avança (player esta no estado intro), sai apos animação de intro
     - Running: jogo rolando (player nos estados walkable powered, dying, spawning), sai apos jogador causar fim de jogo
     - GameOver: tela de fim de jogo, relogio nao avança (player no estado gameover), sai apos jogador pressionar botao
+
+-------
+
+vou precisar de um animation proxy pra poder deixar enquanto nao faço um sistema de animação de verdade. só pra eu poder plugar em qualquer lugar e ter um evento de "animation ended"
+
+todo componente animavel tem um campo Animator, que por sua vez vai ter o método draw. por enquanto só o Player e Ghost. talvez a GameScreen e a StartScreen? ou talvez essas telas teriam animaçoes por codigo...

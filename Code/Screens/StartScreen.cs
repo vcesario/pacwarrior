@@ -64,6 +64,6 @@ public class StartScreen : AbstractScreen
         Console.WriteLine("Going to Gameplay scene...");
 
         ScreenManager.RemoveAllScreens();
-        ScreenManager.AddScreen(new GameScreen(), new HudScreen());
+        ScreenManager.AddScreen(new GameScreen(), new RoundIntroScreen());
     }
 }

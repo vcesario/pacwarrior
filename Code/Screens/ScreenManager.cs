@@ -35,7 +35,8 @@ public class ScreenManager : DrawableGameComponent
     private Texture2D m_BlankTexture;
 
     private List<AbstractScreen> m_Screens;
-    private List<AbstractScreen> m_TempScreensList;
+    private List<AbstractScreen> m_TempScreensList_Update;
+    private List<AbstractScreen> m_TempScreensList_Messages;
 
     private bool m_TraceEnabled;
 
@@ -55,7 +56,8 @@ public class ScreenManager : DrawableGameComponent
         game.IsMouseVisible = true;
 
         m_Screens = new List<AbstractScreen>();
-        m_TempScreensList = new List<AbstractScreen>();
+        m_TempScreensList_Update = new List<AbstractScreen>();
+        m_TempScreensList_Messages = new List<AbstractScreen>();
     }
 
     // public override void Initialize()
@@ -72,7 +74,7 @@ public class ScreenManager : DrawableGameComponent
 
         // first screen
         AddScreen(new StartScreen()); // <-- original
-        // AddScreen(new GameScreen(m_SharedSpriteBatch), new HudScreen()); // <-- debug
+        // AddScreen(new GameScreen(), new HudScreen()); // <-- debug
 
         base.LoadContent();
     }
@@ -81,21 +83,21 @@ public class ScreenManager : DrawableGameComponent
     {
         // Make a copy of the master screen list, to avoid confusion if
         // the process of updating one screen adds or removes others.
-        m_TempScreensList.Clear();
+        m_TempScreensList_Update.Clear();
 
         foreach (AbstractScreen screen in m_Screens)
-            m_TempScreensList.Add(screen);
+            m_TempScreensList_Update.Add(screen);
 
         bool otherScreenHasFocus = !Game.IsActive;
         bool coveredByOtherScreen = false;
 
         // Loop as long as there are screens waiting to be updated.
-        while (m_TempScreensList.Count > 0)
+        while (m_TempScreensList_Update.Count > 0)
         {
             // Pop the topmost screen off the waiting list.
-            AbstractScreen screen = m_TempScreensList[m_TempScreensList.Count - 1];
+            AbstractScreen screen = m_TempScreensList_Update[m_TempScreensList_Update.Count - 1];
 
-            m_TempScreensList.RemoveAt(m_TempScreensList.Count - 1);
+            m_TempScreensList_Update.RemoveAt(m_TempScreensList_Update.Count - 1);
 
             // Update the screen.
             screen.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
@@ -242,5 +244,30 @@ public class ScreenManager : DrawableGameComponent
         SharedSpriteBatch.Draw(m_Instance.m_BlankTexture,
                          new Rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
                          Color.Black * alpha);
+    }
+
+    public static void SendMessageToScreens(GameMessages message)
+    {
+        // Make a copy of the master screen list, to avoid confusion if
+        // the process of updating one screen adds or removes others.
+        m_Instance.m_TempScreensList_Messages.Clear();
+
+        foreach (AbstractScreen screen in m_Instance.m_Screens)
+            m_Instance.m_TempScreensList_Messages.Add(screen);
+
+        // Loop as long as there are screens waiting to be updated.
+        while (m_Instance.m_TempScreensList_Messages.Count > 0)
+        {
+            // Pop the topmost screen off the waiting list.
+            AbstractScreen screen = m_Instance.m_TempScreensList_Messages[m_Instance.m_TempScreensList_Messages.Count - 1];
+
+            m_Instance.m_TempScreensList_Messages.RemoveAt(m_Instance.m_TempScreensList_Messages.Count - 1);
+
+            if (screen.ScreenState == ScreenStates.TransitionOn ||
+                screen.ScreenState == ScreenStates.Active)
+            {
+                screen.ReceiveMessage(message);
+            }
+        }
     }
 }

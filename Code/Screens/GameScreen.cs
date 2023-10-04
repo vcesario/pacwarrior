@@ -22,6 +22,9 @@ public class GameScreen : AbstractScreen
 
     public override void Load()
     {
+        // set start time
+        RoundDuration = TimeSpan.Zero;
+
         LDtkFile file = LDtkFile.FromFile("Content/map/level-layout.ldtk");
         m_World = file.LoadWorld(new Guid("9b923070-3b70-11ee-9cfe-037a95b3620d"));
 
@@ -34,9 +37,6 @@ public class GameScreen : AbstractScreen
 
         // initialize enemies
         GhostManager.Initialize();
-
-        // set start time
-        RoundDuration = TimeSpan.Zero;
 
         // if there's an intro, initial pause to wait for intro to end
         if (ScreenManager.IsScreenOpen<RoundIntroScreen>())
@@ -84,6 +84,8 @@ public class GameScreen : AbstractScreen
         UnpauseGame();
         ScreenManager.AddScreen(new HudScreen());
 
+        Console.WriteLine("Game started!");
+
         // instantiate coins
         // set player state to playing
     }
@@ -105,5 +107,27 @@ public class GameScreen : AbstractScreen
     public void EndGame()
     {
 
+    }
+
+    public int GetRemainingLives()
+    {
+        if (m_Player == null)
+            return 0;
+
+        return m_Player.LivesRemaining;
+    }
+
+    public override void ReceiveMessage(GameMessages message)
+    {
+        switch (message)
+        {
+            case GameMessages.RoundLost:
+                ScreenManager.RemoveScreen<HudScreen>();
+                ScreenManager.AddScreen(new GameOverScreen());
+                break;
+            default:
+                base.ReceiveMessage(message);
+                break;
+        }
     }
 }

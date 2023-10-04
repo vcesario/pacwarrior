@@ -53,6 +53,7 @@ public static class GhostManager
         // **
 
         CalculateNextMovement();
+        m_MovementStartTime = GameScreen.RoundDuration;
     }
 
     public static void UpdateBrain()

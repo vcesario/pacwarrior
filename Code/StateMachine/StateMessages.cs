@@ -1,7 +1,12 @@
 namespace topdown1;
 
-public enum StateMessages
+public enum GameMessages
 {
     KillPlayer,
     RespawnPlayer,
+    EndPlayerSpawning,
+
+    PlayerLivesChanged,
+
+    RoundLost,
 }

@@ -7,6 +7,7 @@ public class PlayerState_Dying : PlayerState
 {
     private TimeSpan m_DeathTime;
     private float m_DyingAnimationDuration;
+    private bool m_DeathConsequencesDetermined;
 
     public PlayerState_Dying(Player player) : base(player)
     {
@@ -16,6 +17,8 @@ public class PlayerState_Dying : PlayerState
     {
         m_DeathTime = GameScreen.RoundDuration;
         m_DyingAnimationDuration = 3;
+
+        m_Player.SetColor(Color.OrangeRed);
 
         base.Enter();
     }
@@ -27,23 +30,48 @@ public class PlayerState_Dying : PlayerState
     public override void Update(GameTime gameTime)
     {
         float elapsed = (float)(GameScreen.RoundDuration - m_DeathTime).TotalSeconds;
-        if (elapsed >= m_DyingAnimationDuration)
+        if (!m_DeathConsequencesDetermined && elapsed >= m_DyingAnimationDuration)
         {
-            ReceiveMessage(StateMessages.RespawnPlayer);
+            DetermineDeathConsequences();
+            m_DeathConsequencesDetermined = true;
         }
-        Console.WriteLine($"PLayer dead ({elapsed})");
     }
 
-    public override void ReceiveMessage(StateMessages message)
+    /// <summary>
+    /// Basically checks if player can play more, or the game has ended
+    /// </summary>
+    private void DetermineDeathConsequences()
+    {
+        m_Player.LoseLife();
+        if (m_Player.LivesRemaining > 0)
+        {
+            ReceiveMessage(GameMessages.RespawnPlayer);
+        }
+        else
+        {
+            ReceiveMessage(GameMessages.RoundLost);
+        }
+
+    }
+
+    public override void ReceiveMessage(GameMessages message)
     {
         switch (message)
         {
-            case StateMessages.RespawnPlayer:
+            case GameMessages.RespawnPlayer:
                 m_Player.SetState(new PlayerState_Spawning(m_Player));
                 break;
+
             default:
                 base.ReceiveMessage(message);
                 break;
         }
+    }
+
+    public override void Exit()
+    {
+        m_Player.SetColor(Color.White);
+
+        base.Exit();
     }
 }

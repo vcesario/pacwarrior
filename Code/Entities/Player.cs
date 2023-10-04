@@ -21,6 +21,12 @@ public class Player
 
     public PlayerState State { get; private set; }
 
+    private bool m_IsInvisible;
+
+    public int LivesRemaining { get; private set; }
+
+    public Color SpriteColor { get; private set; }
+
     public Player(PlayerEntity entity)
     {
         m_StartingPosition = entity.Position.ToPoint();
@@ -33,12 +39,18 @@ public class Player
         m_PlayerSpeed = 150f;
         m_Tex = TextureManager.CharacterTex;
 
+        LivesRemaining = 1;
+        // ScreenManager.SendMessageToScreens(GameMessages.PlayerLivesChanged); // this line is not needed I think
+
         State = new PlayerState_Default(this);
+
+        SpriteColor = Color.White;
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(m_Tex, new Vector2(m_TexBox.Left, m_TexBox.Top), TextureManager.PlayerTexSourceRect, Color.White);
+        if (!m_IsInvisible)
+            spriteBatch.Draw(m_Tex, new Vector2(m_TexBox.Left, m_TexBox.Top), TextureManager.PlayerTexSourceRect, SpriteColor);
 
         if (GameStartup.DebugEnabled)
         {
@@ -168,5 +180,24 @@ public class Player
     {
         m_TexBox.Top = m_StartingPosition.Y;
         m_TexBox.Left = m_StartingPosition.X;
+    }
+
+    public void SetInvisible(bool value)
+    {
+        m_IsInvisible = value;
+    }
+
+    public void LoseLife()
+    {
+        if (LivesRemaining > 0)
+        {
+            LivesRemaining--;
+            ScreenManager.SendMessageToScreens(GameMessages.PlayerLivesChanged);
+        }
+    }
+
+    public void SetColor(Color newColor)
+    {
+        SpriteColor = newColor;
     }
 }

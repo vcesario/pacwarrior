@@ -14,11 +14,17 @@ public abstract class PlayerState : IState
 
     public abstract void ProcessInput(GameTime gameTime);
     public abstract void Update(GameTime gameTime);
-    public virtual void ReceiveMessage(StateMessages message)
+    public virtual void ReceiveMessage(GameMessages message)
     {
-        if (GameStartup.DebugEnabled)
+        switch (message)
         {
-            Console.WriteLine($"Current state \"{GetType()}\" can't interpret message \"{message}\".");
+            case GameMessages.RoundLost:
+                ScreenManager.SendMessageToScreens(message);
+                break;
+            default:
+                if (GameStartup.DebugEnabled)
+                    Console.WriteLine($"Current state \"{GetType()}\" can't interpret message \"{message}\".");
+                break;
         }
     }
 

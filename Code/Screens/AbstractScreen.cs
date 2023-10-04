@@ -23,4 +23,9 @@ public abstract class AbstractScreen
     /// Reminder: Sprite batch already begins/ends outside of this.
     /// </summary>
     public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+
+    public virtual void ReceiveMessage(GameMessages message)
+    {
+
+    }
 }

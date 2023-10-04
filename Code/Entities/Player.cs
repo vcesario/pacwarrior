@@ -39,7 +39,7 @@ public class Player
         m_PlayerSpeed = 150f;
         m_Tex = TextureManager.CharacterTex;
 
-        LivesRemaining = 1;
+        LivesRemaining = 3;
         // ScreenManager.SendMessageToScreens(GameMessages.PlayerLivesChanged); // this line is not needed I think
 
         State = new PlayerState_Default(this);

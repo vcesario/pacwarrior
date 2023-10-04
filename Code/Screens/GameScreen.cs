@@ -121,7 +121,7 @@ public class GameScreen : AbstractScreen
     {
         switch (message)
         {
-            case GameMessages.RoundLost:
+            case GameMessages.PlayerLostGame:
                 ScreenManager.RemoveScreen<HudScreen>();
                 ScreenManager.AddScreen(new GameOverScreen());
                 break;

@@ -55,20 +55,7 @@ public class PlayerState_Spawning : PlayerState
 
         if (elapsed >= m_Duration)
         {
-            ReceiveMessage(GameMessages.EndPlayerSpawning);
-        }
-    }
-
-    public override void ReceiveMessage(GameMessages message)
-    {
-        switch (message)
-        {
-            case GameMessages.EndPlayerSpawning:
-                m_Player.SetState(new PlayerState_Default(m_Player));
-                break;
-            default:
-                base.ReceiveMessage(message);
-                break;
+            GoToDefault();
         }
     }
 
@@ -77,5 +64,10 @@ public class PlayerState_Spawning : PlayerState
         m_Player.SetInvisible(false);
 
         base.Exit();
+    }
+
+    public void GoToDefault()
+    {
+        m_Player.SetState(new PlayerState_Default(m_Player));
     }
 }

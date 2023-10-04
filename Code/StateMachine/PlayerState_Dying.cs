@@ -45,26 +45,11 @@ public class PlayerState_Dying : PlayerState
         m_Player.LoseLife();
         if (m_Player.LivesRemaining > 0)
         {
-            ReceiveMessage(GameMessages.RespawnPlayer);
+            GoToRespawn();
         }
         else
         {
-            ReceiveMessage(GameMessages.RoundLost);
-        }
-
-    }
-
-    public override void ReceiveMessage(GameMessages message)
-    {
-        switch (message)
-        {
-            case GameMessages.RespawnPlayer:
-                m_Player.SetState(new PlayerState_Spawning(m_Player));
-                break;
-
-            default:
-                base.ReceiveMessage(message);
-                break;
+            LoseGame();
         }
     }
 
@@ -73,5 +58,15 @@ public class PlayerState_Dying : PlayerState
         m_Player.SetColor(Color.White);
 
         base.Exit();
+    }
+
+    private void GoToRespawn()
+    {
+        m_Player.SetState(new PlayerState_Spawning(m_Player));
+    }
+
+    private void LoseGame()
+    {
+        ScreenManager.SendMessageToScreens(GameMessages.PlayerLostGame);
     }
 }

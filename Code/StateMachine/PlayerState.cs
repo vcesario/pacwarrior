@@ -18,9 +18,6 @@ public abstract class PlayerState : IState
     {
         switch (message)
         {
-            case GameMessages.RoundLost:
-                ScreenManager.SendMessageToScreens(message);
-                break;
             default:
                 if (GameStartup.DebugEnabled)
                     Console.WriteLine($"Current state \"{GetType()}\" can't interpret message \"{message}\".");

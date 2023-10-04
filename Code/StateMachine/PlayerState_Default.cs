@@ -42,21 +42,13 @@ public class PlayerState_Default : PlayerState
             if (playerBox.IsOverlapping(ghost.GetColliderBox()))
             {
                 // eliminate player
-                ReceiveMessage(GameMessages.KillPlayer);
+                GoToDying();
             }
         }
     }
 
-    public override void ReceiveMessage(GameMessages message)
+    private void GoToDying()
     {
-        switch (message)
-        {
-            case GameMessages.KillPlayer:
-                m_Player.SetState(new PlayerState_Dying(m_Player));
-                break;
-            default:
-                base.ReceiveMessage(message);
-                break;
-        }
+        m_Player.SetState(new PlayerState_Dying(m_Player));
     }
 }

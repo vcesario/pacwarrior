@@ -6,8 +6,6 @@ namespace topdown1;
 
 public class Player
 {
-    // private BoundingBox m_TexBox;
-
     private float m_XRemainder;
     private float m_YRemainder;
 
@@ -15,7 +13,6 @@ public class Player
     private Point m_ColliderSizeHalf;
 
     private float m_PlayerSpeed;
-    // private Texture2D m_Tex;
 
     private Point m_StartingPosition;
 
@@ -25,35 +22,27 @@ public class Player
 
     public int LivesRemaining { get; private set; }
 
-    // public Color SpriteColor { get; private set; }
     public TexRenderer Renderer { get; private set; }
+    public Point Position => Renderer.Position;
 
     public Player(PlayerEntity entity)
     {
-        Renderer = new TexRenderer(TextureManager.CharacterTex, TextureManager.PlayerTexSourceRect, entity.Position.ToPoint());
+        Renderer = new TexRenderer(TextureManager.MainTex, TextureManager.PlayerTexSourceRect, entity.Position.ToPoint());
         m_StartingPosition = Renderer.Position;
-
-        // m_TexBox = new BoundingBox((int)entity.Position.X, (int)entity.Position.Y, 16, 16);
 
         m_ColliderSize = new Point(11, 11);
         m_ColliderSizeHalf = m_ColliderSize.Scale(0.5f);
 
         m_PlayerSpeed = 150f;
-        // m_Tex = TextureManager.CharacterTex;
 
         LivesRemaining = 3;
-        // ScreenManager.SendMessageToScreens(GameMessages.PlayerLivesChanged); // this line is not needed I think
 
         State = new PlayerState_Default(this);
-
-        // SpriteColor = Color.White;
-        // Renderer.SetPosition(m_StartingPosition);
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
         if (!m_IsInvisible)
-            // spriteBatch.Draw(m_Tex, new Vector2(m_TexBox.Left, m_TexBox.Top), TextureManager.PlayerTexSourceRect, SpriteColor);
             Renderer.Draw(spriteBatch);
 
         if (GameStartup.DebugEnabled)
@@ -115,7 +104,6 @@ public class Player
             {
                 Point currentPosition = Renderer.Position;
                 Renderer.SetPosition(new Point(currentPosition.X + sign, currentPosition.Y));
-                // m_TexBox.Left += sign;
                 pixelAmount -= sign;
             }
         }
@@ -162,7 +150,6 @@ public class Player
             {
                 Point currentPosition = Renderer.Position;
                 Renderer.SetPosition(new Point(currentPosition.X, currentPosition.Y + sign));
-                // m_TexBox.Top += sign;
                 pixelAmount -= sign;
             }
         }
@@ -187,8 +174,6 @@ public class Player
     public void ReturnToStartPosition()
     {
         Renderer.SetPosition(m_StartingPosition);
-        // m_TexBox.Top = m_StartingPosition.Y;
-        // m_TexBox.Left = m_StartingPosition.X;
     }
 
     public void SetInvisible(bool value)

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace topdown1;
 
-public static class GhostManager
+public static class GhostAI
 {
     private static List<Ghost> m_Ghosts;
     public static IEnumerable<Ghost> Ghosts => m_Ghosts;

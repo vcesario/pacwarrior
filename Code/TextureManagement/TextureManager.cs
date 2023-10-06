@@ -5,33 +5,57 @@ namespace topdown1;
 
 public static class TextureManager
 {
-    private static Texture2D _characterTex;
-    public static Texture2D CharacterTex
+    private static Texture2D _mainTex;
+    public static Texture2D MainTex
     {
         get
         {
-            if (_characterTex == null)
-                _characterTex = GameStartup.ContentManager.Load<Texture2D>("textures/tilemap");
+            if (_mainTex == null)
+                _mainTex = GameStartup.ContentManager.Load<Texture2D>("textures/tilemap");
 
-            return _characterTex;
+            return _mainTex;
         }
     }
 
     public static int CharacterTexTileSize = 16;
     private static Point GhostTexCoords = new Point(1, 10);
     private static Point PlayerTexCoords = new Point(0, 8);
+    private static Point Coin1TexCoords = new Point(6, 9);
+    private static Point Coin2TexCoords = new Point(7, 9);
+    private static Point Coin3TexCoords = new Point(8, 9);
 
     public static Rectangle GhostTexSourceRect = new Rectangle(
-        TextureManager.CharacterTexTileSize * GhostTexCoords.X,
-        TextureManager.CharacterTexTileSize * GhostTexCoords.Y,
-        TextureManager.CharacterTexTileSize,
-        TextureManager.CharacterTexTileSize
+        CharacterTexTileSize * GhostTexCoords.X,
+        CharacterTexTileSize * GhostTexCoords.Y,
+        CharacterTexTileSize,
+        CharacterTexTileSize
     );
 
     public static Rectangle PlayerTexSourceRect = new Rectangle(
-        TextureManager.CharacterTexTileSize * PlayerTexCoords.X,
-        TextureManager.CharacterTexTileSize * PlayerTexCoords.Y,
-        TextureManager.CharacterTexTileSize,
-        TextureManager.CharacterTexTileSize
+        CharacterTexTileSize * PlayerTexCoords.X,
+        CharacterTexTileSize * PlayerTexCoords.Y,
+        CharacterTexTileSize,
+        CharacterTexTileSize
+    );
+
+    public static Rectangle Coin1TexSourceRect = new Rectangle(
+        CharacterTexTileSize * Coin1TexCoords.X,
+        CharacterTexTileSize * Coin1TexCoords.Y,
+        CharacterTexTileSize,
+        CharacterTexTileSize
+    );
+
+    public static Rectangle Coin2TexSourceRect = new Rectangle(
+        CharacterTexTileSize * Coin2TexCoords.X,
+        CharacterTexTileSize * Coin2TexCoords.Y,
+        CharacterTexTileSize,
+        CharacterTexTileSize
+    );
+
+    public static Rectangle Coin3TexSourceRect = new Rectangle(
+        CharacterTexTileSize * Coin3TexCoords.X,
+        CharacterTexTileSize * Coin3TexCoords.Y,
+        CharacterTexTileSize,
+        CharacterTexTileSize
     );
 }

@@ -37,7 +37,7 @@ public class PlayerState_Default : PlayerState
     public override void Update(GameTime gameTime)
     {
         BoundingBox playerBox = m_Player.GetColliderBox();
-        foreach (var ghost in GhostManager.Ghosts)
+        foreach (var ghost in GhostAI.Ghosts)
         {
             if (playerBox.IsOverlapping(ghost.GetColliderBox()))
             {

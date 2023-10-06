@@ -36,7 +36,10 @@ public class GameScreen : AbstractScreen
         m_Player = new Player(playerEntity);
 
         // initialize enemies
-        GhostManager.Initialize();
+        GhostAI.Initialize();
+
+        // spawn coins
+        CoinManager.Initialize(m_Player.Position);
 
         // if there's an intro, initial pause to wait for intro to end
         if (ScreenManager.IsScreenOpen<RoundIntroScreen>())
@@ -65,7 +68,7 @@ public class GameScreen : AbstractScreen
 
         RoundDuration += gameTime.ElapsedGameTime;
 
-        GhostManager.UpdateBrain();
+        GhostAI.UpdateBrain();
 
         m_Player.State.Update(gameTime);
     }
@@ -74,7 +77,9 @@ public class GameScreen : AbstractScreen
     {
         MapGrid.Draw(spriteBatch);
 
-        GhostManager.DrawGhosts(spriteBatch);
+        CoinManager.Draw(spriteBatch);
+
+        GhostAI.DrawGhosts(spriteBatch);
 
         m_Player.Draw(spriteBatch);
     }

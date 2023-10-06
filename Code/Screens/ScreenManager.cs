@@ -60,11 +60,6 @@ public class ScreenManager : DrawableGameComponent
         m_TempScreensList_Messages = new List<AbstractScreen>();
     }
 
-    // public override void Initialize()
-    // {
-    //     base.Initialize();
-    // }
-
     protected override void LoadContent()
     {
         m_SharedSpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -73,8 +68,8 @@ public class ScreenManager : DrawableGameComponent
         m_BlankTexture.SetData(new[] { Color.White });
 
         // first screen
-        AddScreen(new StartScreen()); // <-- original
-        // AddScreen(new GameScreen(), new HudScreen()); // <-- debug
+        // AddScreen(new StartScreen()); // <-- original
+        AddScreen(new GameScreen(), new HudScreen()); // <-- debug
 
         base.LoadContent();
     }
@@ -171,20 +166,6 @@ public class ScreenManager : DrawableGameComponent
         return screen;
     }
 
-    // public void RemoveScreenWithTransition(AbstractScreen screen, Action onTransitionEnded = null)
-    // {
-    //     // screen animation
-    //     m_Screens.Remove(screen);
-    //     onTransitionEnded?.Invoke();
-    // }
-    // public void AddScreenWithTransition(AbstractScreen screen, Action onTransitionEnded = null)
-    // {
-    //     m_Screens.Add(screen);
-    //     screen.Load();
-    //     // screen animation
-    //     onTransitionEnded?.Invoke();
-    // }
-
     public static void RemoveAllScreens()
     {
         m_Instance.m_Screens.Clear();
@@ -212,28 +193,6 @@ public class ScreenManager : DrawableGameComponent
             }
         }
     }
-
-    // public GameScreen InstantiateGameScreen()
-    // {
-    //     return new GameScreen(this, m_SharedSpriteBatch);
-    // }
-
-    // public StartScreen InstantiateStartScreen()
-    // {
-    //     return new StartScreen(this);
-    // }
-
-    // public HudScreen InstantiateHudScreen()
-    // {
-    //     return new HudScreen(this);
-    // }
-
-    // #region Screen Calls
-    // public void OpenGameplay()
-    // {
-    //     AddScreenWithTransition(InstantiateGameScreen());
-    // }
-    // #endregion
 
     /// <summary>
     /// Helper draws a translucent black fullscreen sprite, used for fading

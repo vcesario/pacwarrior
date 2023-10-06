@@ -18,7 +18,7 @@ public class PlayerState_Dying : PlayerState
         m_DeathTime = GameScreen.RoundDuration;
         m_DyingAnimationDuration = 3;
 
-        m_Player.SetColor(Color.OrangeRed);
+        m_Player.Renderer.SetColor(Color.OrangeRed);
 
         base.Enter();
     }
@@ -55,7 +55,7 @@ public class PlayerState_Dying : PlayerState
 
     public override void Exit()
     {
-        m_Player.SetColor(Color.White);
+        m_Player.Renderer.SetColor(Color.White);
 
         base.Exit();
     }

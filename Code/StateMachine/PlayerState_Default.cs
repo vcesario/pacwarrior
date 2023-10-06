@@ -1,54 +1,17 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace topdown1;
 
 public class PlayerState_Default : PlayerState
 {
+    protected override bool CanMove => true;
+    protected override bool CanCollectCoins => true;
+    protected override bool CanCollideWithGhosts => true;
+    protected override bool CanPause => true;
+
     public PlayerState_Default(Player player) : base(player)
     {
-    }
-
-    public override void ProcessInput(GameTime gameTime)
-    {
-        // move player
-        Vector2 resultMovement = Vector2.Zero;
-        if (InputState.GetPressing(InputCommands.LEFT))
-        {
-            resultMovement += Vector2.UnitX * -1;
-        }
-        else if (InputState.GetPressing(InputCommands.RIGHT))
-        {
-            resultMovement += Vector2.UnitX;
-        }
-
-        if (InputState.GetPressing(InputCommands.UP))
-        {
-            resultMovement += Vector2.UnitY * -1;
-        }
-        else if (InputState.GetPressing(InputCommands.DOWN))
-        {
-            resultMovement += Vector2.UnitY;
-        }
-
-        m_Player.Move(resultMovement, gameTime.ElapsedGameTime.TotalSeconds);
-    }
-
-    public override void Update(GameTime gameTime)
-    {
-        BoundingBox playerBox = m_Player.GetColliderBox();
-        foreach (var ghost in GhostAI.Ghosts)
-        {
-            if (playerBox.IsOverlapping(ghost.GetColliderBox()))
-            {
-                // eliminate player
-                GoToDying();
-            }
-        }
-    }
-
-    private void GoToDying()
-    {
-        m_Player.SetState(new PlayerState_Dying(m_Player));
     }
 }

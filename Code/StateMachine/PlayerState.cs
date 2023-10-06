@@ -7,21 +7,81 @@ public abstract class PlayerState : IState
 {
     protected Player m_Player;
 
+    protected abstract bool CanMove { get; }
+    protected abstract bool CanCollectCoins { get; }
+    protected abstract bool CanCollideWithGhosts { get; }
+    protected abstract bool CanPause { get; }
+
     public PlayerState(Player player)
     {
         m_Player = player;
     }
 
-    public abstract void ProcessInput(GameTime gameTime);
-    public abstract void Update(GameTime gameTime);
-    public virtual void ReceiveMessage(GameMessages message)
+    public virtual void ProcessInput(GameTime gameTime)
     {
-        switch (message)
+        if (CanPause)
         {
-            default:
-                if (GameStartup.DebugEnabled)
-                    Console.WriteLine($"Current state \"{GetType()}\" can't interpret message \"{message}\".");
-                break;
+            if (InputState.GetPressed(InputCommands.UI_SUBMIT))
+            {
+                PauseGame();
+            }
+        }
+        if (CanMove)
+        {
+            // move player
+            Vector2 resultMovement = Vector2.Zero;
+            if (InputState.GetPressing(InputCommands.LEFT))
+            {
+                resultMovement += Vector2.UnitX * -1;
+            }
+            else if (InputState.GetPressing(InputCommands.RIGHT))
+            {
+                resultMovement += Vector2.UnitX;
+            }
+
+            if (InputState.GetPressing(InputCommands.UP))
+            {
+                resultMovement += Vector2.UnitY * -1;
+            }
+            else if (InputState.GetPressing(InputCommands.DOWN))
+            {
+                resultMovement += Vector2.UnitY;
+            }
+
+            m_Player.Move(resultMovement, gameTime.ElapsedGameTime.TotalSeconds);
+        }
+    }
+
+    public virtual void Update(GameTime gameTime)
+    {
+        BoundingBox playerBox = m_Player.GetColliderBox();
+
+        if (CanCollectCoins)
+        {
+            Coin collectedCoin = null;
+            foreach (var coin in CoinManager.Coins)
+            {
+                if (playerBox.IsOverlapping(coin.GetColliderBox()))
+                {
+                    collectedCoin = coin;
+                }
+            }
+            CoinManager.Collect(collectedCoin);
+        }
+
+        if (GameScreen.HasRoundEnded)
+            return;
+
+        if (CanCollideWithGhosts)
+        {
+            foreach (var ghost in GhostAI.Ghosts)
+            {
+                if (playerBox.IsOverlapping(ghost.GetColliderBox()))
+                {
+                    // eliminate player
+                    KillPlayer();
+                }
+            }
         }
     }
 
@@ -38,5 +98,15 @@ public abstract class PlayerState : IState
         {
             Console.WriteLine($"Exiting state = {GetType()}");
         }
+    }
+
+    private void KillPlayer()
+    {
+        m_Player.SetState(new PlayerState_Dying(m_Player));
+    }
+
+    private void PauseGame()
+    {
+        ScreenManager.SendMessageToScreens(GameMessages.PlayerPaused);
     }
 }

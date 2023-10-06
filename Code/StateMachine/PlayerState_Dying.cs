@@ -5,6 +5,14 @@ namespace topdown1;
 
 public class PlayerState_Dying : PlayerState
 {
+    protected override bool CanMove => false;
+
+    protected override bool CanCollectCoins => false;
+
+    protected override bool CanCollideWithGhosts => false;
+
+    protected override bool CanPause => true;
+
     private TimeSpan m_DeathTime;
     private float m_DyingAnimationDuration;
     private bool m_DeathConsequencesDetermined;
@@ -23,10 +31,6 @@ public class PlayerState_Dying : PlayerState
         base.Enter();
     }
 
-    public override void ProcessInput(GameTime gameTime)
-    {
-    }
-
     public override void Update(GameTime gameTime)
     {
         float elapsed = (float)(GameScreen.RoundDuration - m_DeathTime).TotalSeconds;
@@ -35,6 +39,8 @@ public class PlayerState_Dying : PlayerState
             DetermineDeathConsequences();
             m_DeathConsequencesDetermined = true;
         }
+
+        base.Update(gameTime);
     }
 
     /// <summary>
@@ -67,6 +73,6 @@ public class PlayerState_Dying : PlayerState
 
     private void LoseGame()
     {
-        ScreenManager.SendMessageToScreens(GameMessages.PlayerLostGame);
+        ScreenManager.SendMessageToScreens(GameMessages.PlayerLostRound);
     }
 }

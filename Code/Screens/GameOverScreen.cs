@@ -15,6 +15,11 @@ public class GameOverScreen : AbstractScreen
     private Vector2 m_CaptionScreenPosition;
     private Vector2 m_CaptionPivot;
 
+    public GameOverScreen(bool playerWon)
+    {
+        m_Title = playerWon ? "YOU WON!" : "GAME OVER";
+    }
+
     public override void Load()
     {
         m_TitleFont = GameText.Font_OpenSansBold.GetFont(32);

@@ -10,4 +10,9 @@ public class Coin
     {
         Renderer = new TexRenderer(TextureManager.MainTex, TextureManager.Coin1TexSourceRect, position);
     }
+
+    public BoundingBox GetColliderBox()
+    {
+        return Renderer.Box;
+    }
 }

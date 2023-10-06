@@ -19,11 +19,14 @@ public class GameScreen : AbstractScreen
 
     public static TimeSpan RoundDuration { get; private set; }
     public bool m_IsPaused;
+    public static bool HasRoundEnded { get; private set; }
 
     public override void Load()
     {
         // set start time
         RoundDuration = TimeSpan.Zero;
+
+        HasRoundEnded = false;
 
         LDtkFile file = LDtkFile.FromFile("Content/map/level-layout.ldtk");
         m_World = file.LoadWorld(new Guid("9b923070-3b70-11ee-9cfe-037a95b3620d"));
@@ -51,11 +54,6 @@ public class GameScreen : AbstractScreen
 
     public override bool HandleInput(GameTime gameTime)
     {
-        if (InputState.GetPressed(InputCommands.UI_SUBMIT))
-        {
-            PauseGame();
-        }
-
         m_Player.State.ProcessInput(gameTime);
 
         return true;
@@ -88,8 +86,6 @@ public class GameScreen : AbstractScreen
     {
         UnpauseGame();
         ScreenManager.AddScreen(new HudScreen());
-
-        Console.WriteLine("Game started!");
 
         // instantiate coins
         // set player state to playing
@@ -126,10 +122,22 @@ public class GameScreen : AbstractScreen
     {
         switch (message)
         {
-            case GameMessages.PlayerLostGame:
+            case GameMessages.PlayerLostRound:
+                HasRoundEnded = true;
                 ScreenManager.RemoveScreen<HudScreen>();
-                ScreenManager.AddScreen(new GameOverScreen());
+                ScreenManager.AddScreen(new GameOverScreen(false));
                 break;
+
+            case GameMessages.PlayerWonRound:
+                HasRoundEnded = true;
+                ScreenManager.RemoveScreen<HudScreen>();
+                ScreenManager.AddScreen(new GameOverScreen(true));
+                break;
+
+            case GameMessages.PlayerPaused:
+                PauseGame();
+                break;
+
             default:
                 base.ReceiveMessage(message);
                 break;

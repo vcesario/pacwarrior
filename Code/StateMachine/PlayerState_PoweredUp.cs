@@ -8,11 +8,11 @@ public class PlayerState_PoweredUp : PlayerState
     {
     }
 
-    public override void ProcessInput(GameTime gameTime)
-    {
-    }
+    protected override bool CanMove => throw new System.NotImplementedException();
 
-    public override void Update(GameTime gameTime)
-    {
-    }
+    protected override bool CanCollectCoins => throw new System.NotImplementedException();
+
+    protected override bool CanCollideWithGhosts => throw new System.NotImplementedException();
+
+    protected override bool CanPause => throw new System.NotImplementedException();
 }

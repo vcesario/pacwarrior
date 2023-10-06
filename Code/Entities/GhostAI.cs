@@ -35,7 +35,7 @@ public static class GhostAI
 
         // instantiate n ghosts
         m_Ghosts = new List<Ghost>();
-        int initialGhostAmount = 10;
+        int initialGhostAmount = 7;
         for (int i = 0; i < initialGhostAmount; i++)
         {
             Ghost newGhost = new Ghost(MapGrid.GridCoordinateToPosition(walkables[i]));

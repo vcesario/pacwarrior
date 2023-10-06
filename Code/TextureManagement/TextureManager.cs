@@ -18,6 +18,7 @@ public static class TextureManager
     }
 
     public static int CharacterTexTileSize = 16;
+
     private static Point GhostTexCoords = new Point(1, 10);
     private static Point PlayerTexCoords = new Point(0, 8);
     private static Point Coin1TexCoords = new Point(6, 9);

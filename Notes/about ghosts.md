@@ -27,6 +27,18 @@ para cada fantasma:
     chase:
         ???
     
+    flee:
+    
 
 movimentando fantasmas:
+    é melhor calcular o path finding pra cada fantasma de forma independente? ou tentar otimizar calculando tudo no mesmo frame, sempre que possível? independente
+
+    mapgrid contem uma função de getshortestpath(source, target)... não
+
+    cada fantasma tem uma lista de PathPoints (PathPoint é uma struct contendo uma coordenada do grid e uma direção)
+    sempre que um fantasma termina um movimento de tile, ele atualiza o comportamento (roam, chase ou flee)
+    caso o comportamento seja o mesmo que o anterior, ele verifica se sua lista acabou.
+    se nao acabou, continua percorrendo ela até que acabe. se acabou, calcula uma lista nova baseada nesse comportamento.
+    caso o comportamento tenha mudado, joga a lista fora e calcula uma nova para aquele comportamento
+        só precisa jogar a lista fora mesmo se for de roam pra chase, roam pra flee, chase pra flee ou flee pra chase. de flee e chase pra roam, não preciso me preocupar em jogar a lista fora
     

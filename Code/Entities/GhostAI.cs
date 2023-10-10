@@ -9,7 +9,7 @@ public static class GhostAI
 {
     private static List<Ghost> m_Ghosts;
     public static IEnumerable<Ghost> Ghosts => m_Ghosts;
-    private static Tuple<Point, Point>[] m_GhostMoveCoords;
+    private static List<List<Point>> m_GhostMoveCoords;
 
     private static float m_GhostSpeed = 100;
     private static float m_MovementDuration;
@@ -41,7 +41,7 @@ public static class GhostAI
             Ghost newGhost = new Ghost(MapGrid.GridCoordinateToPosition(walkables[i]));
             m_Ghosts.Add(newGhost);
         }
-        m_GhostMoveCoords = new Tuple<Point, Point>[m_Ghosts.Count];
+        m_GhostMoveCoords = new List<List<Point>>();
 
         // ** calculate movement duration
         m_MovementDuration = MapGrid.TileSize / m_GhostSpeed; // approximate formula to match player's
@@ -65,7 +65,10 @@ public static class GhostAI
         if (elapsedPercent >= 1)
         {
             for (int i = 0; i < m_Ghosts.Count; i++)
-                m_Ghosts[i].SetPosition(m_GhostMoveCoords[i].Item2);
+            {
+                m_Ghosts[i].SetPosition(m_GhostMoveCoords[i][1]);
+                m_GhostMoveCoords[i].RemoveAt(0);
+            }
 
             CalculateNextMovement();
             m_MovementStartTime = GameScreen.RoundDuration;
@@ -75,7 +78,7 @@ public static class GhostAI
             // move all ghosts
             for (int i = 0; i < m_Ghosts.Count; i++)
             {
-                Vector2 newPosition = Vector2.Lerp(m_GhostMoveCoords[i].Item1.ToVector2(), m_GhostMoveCoords[i].Item2.ToVector2(), elapsedPercent);
+                Vector2 newPosition = Vector2.Lerp(m_GhostMoveCoords[i][0].ToVector2(), m_GhostMoveCoords[i][1].ToVector2(), elapsedPercent);
                 m_Ghosts[i].SetPosition(newPosition.ToPoint());
             }
         }

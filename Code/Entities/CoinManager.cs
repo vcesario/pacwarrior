@@ -16,7 +16,7 @@ public static class CoinManager
         m_Coins = new List<Coin>();
 
         Point playerCoordinate = MapGrid.PositionToGridCoordinate(playerPosition);
-        foreach (var coordinate in MapGrid.GetAllWalkableTiles())
+        foreach (var coordinate in MapGrid.WalkableCoordinates)
         {
             if (playerCoordinate == coordinate)
                 continue;

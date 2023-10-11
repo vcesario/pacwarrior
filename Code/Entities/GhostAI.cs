@@ -9,39 +9,55 @@ public static class GhostAI
 {
     private static List<Ghost> m_Ghosts;
     public static IEnumerable<Ghost> Ghosts => m_Ghosts;
-    private static List<List<Point>> m_GhostMoveCoords;
+    private static List<List<Point>> m_GhostPaths;
 
-    private static float m_GhostSpeed = 100;
+    private enum GhostBehavior
+    { Roaming = 0, Chasing = 1, Fleeing = 2 }
+    private static List<GhostBehavior> m_GhostBehaviors;
+
+    private static float m_GhostSquareRange_Roaming = MathF.Pow((MapGrid.TileSize * 3), 2);
+    private static float m_GhostSquareRange_ChasingOrFleeing = MathF.Pow((MapGrid.TileSize * 5), 2);
+    private static float m_GhostSpeed;
     private static float m_MovementDuration;
     private static TimeSpan m_MovementStartTime;
 
-    // ghost view range = 100 (circle radius)
-    // 
-
+    private static int m_RoamPathSize;
+    private static int m_ChasePathSize;
+    private static int m_FleePathSize;
+    private static int m_StartingGhostAmount;
 
     public static void Initialize()
     {
-        List<Point> walkables = MapGrid.GetAllWalkableTiles();
+        // initialize balancing values
+        m_GhostSpeed = 10;
+        m_RoamPathSize = 10;
+        m_ChasePathSize = 3;
+        m_FleePathSize = 3;
+        m_StartingGhostAmount = 1;
 
-        // remove tiles in the lower half 
-        for (int i = walkables.Count - 1; i >= 0; i--)
-        {
-            if (walkables[i].Y > MapGrid.GridSize.Y / 2.0f)
-                walkables.RemoveAt(i);
-        }
+        // calculate viable positions for spawning ghosts
+        List<Point> walkables = new List<Point>();
+
+        // only consider tiles in the upper half 
+        foreach (var coordinate in MapGrid.WalkableCoordinates)
+            if (coordinate.Y <= MapGrid.GridSize.Y / 2.0f)
+                walkables.Add(coordinate);
 
         // randomize positions
         walkables.RandomSort();
 
         // instantiate n ghosts
-        m_Ghosts = new List<Ghost>();
-        int initialGhostAmount = 7;
-        for (int i = 0; i < initialGhostAmount; i++)
+        m_Ghosts = new List<Ghost>(m_StartingGhostAmount);
+        m_GhostPaths = new List<List<Point>>(m_StartingGhostAmount);
+        m_GhostBehaviors = new List<GhostBehavior>(m_StartingGhostAmount);
+        for (int i = 0; i < m_StartingGhostAmount; i++)
         {
             Ghost newGhost = new Ghost(MapGrid.GridCoordinateToPosition(walkables[i]));
+            m_GhostPaths.Add(new List<Point>());
+            m_GhostBehaviors.Add(GhostBehavior.Roaming);
+
             m_Ghosts.Add(newGhost);
         }
-        m_GhostMoveCoords = new List<List<Point>>();
 
         // ** calculate movement duration
         m_MovementDuration = MapGrid.TileSize / m_GhostSpeed; // approximate formula to match player's
@@ -52,11 +68,13 @@ public static class GhostAI
         // not to think about it :)
         // **
 
-        CalculateNextMovement();
+        // initialize movement
+        for (int i = 0; i < m_StartingGhostAmount; i++)
+            SetGhostToRoaming(i);
         m_MovementStartTime = GameScreen.RoundDuration;
     }
 
-    public static void UpdateBrain()
+    public static void UpdateBrain(Player player)
     {
         // move ghosts
         float elapsedTime = (float)(GameScreen.RoundDuration - m_MovementStartTime).TotalSeconds;
@@ -66,11 +84,19 @@ public static class GhostAI
         {
             for (int i = 0; i < m_Ghosts.Count; i++)
             {
-                m_Ghosts[i].SetPosition(m_GhostMoveCoords[i][1]);
-                m_GhostMoveCoords[i].RemoveAt(0);
+                m_Ghosts[i].SetPosition(m_GhostPaths[i][1]);
+                m_GhostPaths[i].RemoveAt(0);
+
+                // i need to verify here if ghost should change behavior
+
+                if (m_GhostPaths[i].Count < 2)
+                    CalculateNextMovement(i, player);
+
+                // set next direction
+                Direction4 nextDirection = MapGrid.PositionToGridCoordinate(m_GhostPaths[i][1] - m_GhostPaths[i][0]).ToDirection4();
+                m_Ghosts[i].SetDirection(nextDirection);
             }
 
-            CalculateNextMovement();
             m_MovementStartTime = GameScreen.RoundDuration;
         }
         else
@@ -78,69 +104,78 @@ public static class GhostAI
             // move all ghosts
             for (int i = 0; i < m_Ghosts.Count; i++)
             {
-                Vector2 newPosition = Vector2.Lerp(m_GhostMoveCoords[i][0].ToVector2(), m_GhostMoveCoords[i][1].ToVector2(), elapsedPercent);
+                Vector2 newPosition = Vector2.Lerp(m_GhostPaths[i][0].ToVector2(), m_GhostPaths[i][1].ToVector2(), elapsedPercent);
                 m_Ghosts[i].SetPosition(newPosition.ToPoint());
             }
         }
     }
 
-    private static void CalculateNextMovement()
+    private static void CalculateNextMovement(int i, Player player)
     {
-        if (m_GhostMoveCoords.Length != m_Ghosts.Count)
-            m_GhostMoveCoords = new Tuple<Point, Point>[m_Ghosts.Count];
+        // determine ghost behavior
+        float squareDistance = Vector2.DistanceSquared(m_Ghosts[i].Position.ToVector2(), player.Position.ToVector2());
+        float correctSquareRangeToCheckAgainst = m_GhostBehaviors[i] == GhostBehavior.Roaming ? m_GhostSquareRange_Roaming : m_GhostSquareRange_ChasingOrFleeing;
+        bool isPlayerInRange = squareDistance <= correctSquareRangeToCheckAgainst;
 
-        for (int i = 0; i < m_Ghosts.Count; i++)
+        if (isPlayerInRange && player.State is PlayerState_Default) // else if player is in default state, make ghost chase player
         {
-            Point gridCoordinate = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
-            Direction4 direction = m_Ghosts[i].CurrentDirection;
-
-            // calculate distance from player
-            // ...
-
-            if (/**/true) // if distance large enough, make ghost roam
-            {
-                GetRoamCoord(gridCoordinate, direction, out Point nextCoordinate, out Direction4 nextDirection);
-                m_Ghosts[i].SetDirection(nextDirection);
-                m_GhostMoveCoords[i] = new Tuple<Point, Point>(m_Ghosts[i].Position, MapGrid.GridCoordinateToPosition(nextCoordinate));
-            }
-            else // else, make ghost chase player
-            {
-                Point nextCoordinate = GetChaseCoord();
-                m_GhostMoveCoords[i] = new Tuple<Point, Point>(m_Ghosts[i].Position, MapGrid.GridCoordinateToPosition(nextCoordinate));
-            }
+            SetGhostToChasing(i, player);
+        }
+        else if (isPlayerInRange && player.State is PlayerState_PoweredUp)
+        {
+            SetGhostToFleeing(i, player);
+        }
+        else  // if distance large enough or player is in untargetable state, make ghost roam
+        {
+            SetGhostToRoaming(i);
         }
     }
 
-    private static void GetRoamCoord(Point currentCoordinate, Direction4 currentDirection, out Point nextCoordinate, out Direction4 nextDirection)
+    private static void SetGhostToRoaming(int i)
     {
-        Direction4 leftDirection = currentDirection.Previous();
-        Direction4 rightDirection = currentDirection.Next();
-        Point frontCoord = currentCoordinate + currentDirection.ToCoordinate();
-        Point leftCoord = currentCoordinate + leftDirection.ToCoordinate();
-        Point rightCoord = currentCoordinate + rightDirection.ToCoordinate();
+        if (m_GhostBehaviors[i] != GhostBehavior.Roaming)
+        {
+            m_GhostBehaviors[i] = GhostBehavior.Roaming;
+            m_Ghosts[i].Renderer.SetColor(Color.White);
+        }
 
-        List<Point> walkable = new List<Point>();
-        if (!MapGrid.IsTileAWall(frontCoord.X, frontCoord.Y))
-            walkable.Add(frontCoord);
-        if (!MapGrid.IsTileAWall(leftCoord.X, leftCoord.Y))
-            walkable.Add(leftCoord);
-        if (!MapGrid.IsTileAWall(rightCoord.X, rightCoord.Y))
-            walkable.Add(rightCoord);
+        Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
+        Direction4 currentDirection = m_Ghosts[i].CurrentDirection;
 
-        // here I could make sure that walkable has at least 1 element, but since the level loops on itself,
-        // this will always be true so I'll save myself this check... unless there's an error on the map editing side  x)
-        nextCoordinate = walkable[GameStartup.RandomGenerator.Next(walkable.Count)];
-        if (nextCoordinate == frontCoord)
-            nextDirection = currentDirection;
-        else if (nextCoordinate == leftCoord)
-            nextDirection = leftDirection;
-        else //if (nextCoordinate == rightCoord)
-            nextDirection = rightDirection;
+        MapGrid.GetRandomPath(currentCoord, currentDirection, m_RoamPathSize, out List<Point> newPath);
+
+        m_GhostPaths[i].Clear();
+        foreach (var coord in newPath)
+            m_GhostPaths[i].Add(MapGrid.GridCoordinateToPosition(coord));
     }
-    private static Point GetChaseCoord()
+    private static void SetGhostToChasing(int i, Player player)
     {
-        // ...
-        return default;
+        if (m_GhostBehaviors[i] != GhostBehavior.Chasing)
+        {
+            m_GhostBehaviors[i] = GhostBehavior.Chasing;
+            m_Ghosts[i].Renderer.SetColor(Color.Red);
+        }
+
+        Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
+        // Point playerCoord = MapGrid.PositionToGridCoordinate(player.Position);
+        // MapGrid.GetPathTo(currentCoord, playerCoord, m_ChasePathSize, out List<Point> newPath);
+        MapGrid.GetRandomPath(currentCoord, m_Ghosts[i].CurrentDirection, m_RoamPathSize, out List<Point> newPath);
+
+        m_GhostPaths[i].Clear();
+        foreach (var coord in newPath)
+            m_GhostPaths[i].Add(MapGrid.GridCoordinateToPosition(coord));
+    }
+    private static void SetGhostToFleeing(int i, Player player)
+    {
+        m_GhostBehaviors[i] = GhostBehavior.Fleeing;
+
+        Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
+        Point playerCoord = MapGrid.PositionToGridCoordinate(player.Position);
+        MapGrid.GetPathAwayFrom(currentCoord, playerCoord, m_FleePathSize, out List<Point> newPath);
+
+        m_GhostPaths[i].Clear();
+        foreach (var coord in newPath)
+            m_GhostPaths[i].Add(MapGrid.GridCoordinateToPosition(coord));
     }
 
     public static void DrawGhosts(SpriteBatch spriteBatch)

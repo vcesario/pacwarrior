@@ -79,7 +79,14 @@ public abstract class PlayerState : IState
                 if (playerBox.IsOverlapping(ghost.GetColliderBox()))
                 {
                     // eliminate player
-                    KillPlayer();
+                    if (this is PlayerState_PoweredUp)
+                    {
+                        // kill ghost
+                    }
+                    else
+                    {
+                        KillPlayer();
+                    }
                 }
             }
         }

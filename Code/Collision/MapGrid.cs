@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using LDtk;
@@ -17,6 +18,28 @@ public static class MapGrid
 
     private static LDtkRenderer m_Renderer;
     private static LDtkLevel m_Level;
+
+    private static List<Point> _walkableCoordinates;
+    public static IEnumerable<Point> WalkableCoordinates
+    {
+        get
+        {
+            if (_walkableCoordinates == null)
+            {
+                _walkableCoordinates = new List<Point>();
+                for (int j = 0; j < GridSize.Y; j++)
+                {
+                    for (int i = 0; i < GridSize.X; i++)
+                    {
+                        if (!IsTileAWall(i, j))
+                            _walkableCoordinates.Add(new Point(i, j));
+                    }
+                }
+            }
+
+            return _walkableCoordinates;
+        }
+    }
 
     public static void Initialize(LDtkLevel level, LDtkRenderer levelRenderer)
     {
@@ -80,21 +103,6 @@ public static class MapGrid
         return isWall;
     }
 
-    public static List<Point> GetAllWalkableTiles()
-    {
-        List<Point> walkables = new List<Point>();
-        for (int j = 0; j < GridSize.Y; j++)
-        {
-            for (int i = 0; i < GridSize.X; i++)
-            {
-                if (!IsTileAWall(i, j))
-                    walkables.Add(new Point(i, j));
-            }
-        }
-
-        return walkables;
-    }
-
     public static Point ToCoordinate(this Direction4 direction)
     {
         switch (direction)
@@ -110,5 +118,64 @@ public static class MapGrid
             default:
                 return Point.Zero;
         }
+    }
+
+    public static Direction4 ToDirection4(this Point point)
+    {
+        if (point.X > 0)
+            return Direction4.Right;
+
+        if (point.X < 0)
+            return Direction4.Left;
+
+        if (point.Y > 0)
+            return Direction4.Down;
+
+        return Direction4.Up;
+    }
+
+    public static void GetRandomPath(Point sourceCoordinate, Direction4 sourceDirection, int pathSize, out List<Point> result)
+    {
+        result = new List<Point>() { sourceCoordinate };
+
+        Direction4 currentDirection = sourceDirection;
+
+        while (result.Count < pathSize)
+        {
+            Point currentCoord = result[result.Count - 1];
+
+            Direction4 leftDirection = currentDirection.Previous();
+            Direction4 rightDirection = currentDirection.Next();
+            Point frontCoord = currentCoord + currentDirection.ToCoordinate();
+            Point leftCoord = currentCoord + leftDirection.ToCoordinate();
+            Point rightCoord = currentCoord + rightDirection.ToCoordinate();
+
+            List<Point> walkable = new List<Point>();
+            if (!IsTileAWall(frontCoord.X, frontCoord.Y))
+                walkable.Add(frontCoord);
+            if (!IsTileAWall(leftCoord.X, leftCoord.Y))
+                walkable.Add(leftCoord);
+            if (!IsTileAWall(rightCoord.X, rightCoord.Y))
+                walkable.Add(rightCoord);
+
+            // here I could make sure that walkable has at least 1 element, but since the level loops on itself,
+            // this will always be true so I'll save myself this check... unless there's an error on the map editing side  x)
+            Point nextCoord = walkable[GameStartup.RandomGenerator.Next(walkable.Count)];
+
+            // update currentDirection for the next step
+            if (nextCoord == rightCoord)
+                currentDirection = rightDirection;
+            else if (nextCoord == leftCoord)
+                currentDirection = leftDirection;
+            //else if (nextCoordinate == currentCoord)
+            // keep direction
+
+            result.Add(nextCoord);
+        }
+    }
+
+    public static void GetPathAwayFrom(Point sourceCoord, Point targetCoord, int pathSize, out List<Point> result)
+    {
+        result = new List<Point>();
     }
 }

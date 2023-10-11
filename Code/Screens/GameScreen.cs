@@ -66,7 +66,7 @@ public class GameScreen : AbstractScreen
 
         RoundDuration += gameTime.ElapsedGameTime;
 
-        GhostAI.UpdateBrain();
+        GhostAI.UpdateBrain(m_Player);
 
         m_Player.State.Update(gameTime);
     }

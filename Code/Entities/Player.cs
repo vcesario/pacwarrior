@@ -23,12 +23,13 @@ public class Player
     public int LivesRemaining { get; private set; }
 
     public TexRenderer Renderer { get; private set; }
-    public Point Position => Renderer.Position;
+    public Point Position => Renderer.Box.TopLeft;
+    public Point CenterPosition => Renderer.Box.CenterPosition;
 
     public Player(PlayerEntity entity)
     {
         Renderer = new TexRenderer(TextureManager.MainTex, TextureManager.PlayerTexSourceRect, entity.Position.ToPoint());
-        m_StartingPosition = Renderer.Position;
+        m_StartingPosition = Renderer.Box.TopLeft;
 
         m_ColliderSize = new Point(11, 11);
         m_ColliderSizeHalf = m_ColliderSize.Scale(0.5f);
@@ -102,7 +103,7 @@ public class Player
 
             if (!collided)
             {
-                Point currentPosition = Renderer.Position;
+                Point currentPosition = Renderer.Box.TopLeft;
                 Renderer.SetPosition(new Point(currentPosition.X + sign, currentPosition.Y));
                 pixelAmount -= sign;
             }
@@ -148,7 +149,7 @@ public class Player
 
             if (!collided)
             {
-                Point currentPosition = Renderer.Position;
+                Point currentPosition = Renderer.Box.TopLeft;
                 Renderer.SetPosition(new Point(currentPosition.X, currentPosition.Y + sign));
                 pixelAmount -= sign;
             }

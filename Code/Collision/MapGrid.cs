@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -134,9 +135,19 @@ public static class MapGrid
         return Direction4.Up;
     }
 
-    public static void GetRandomPath(Point sourceCoordinate, Direction4 sourceDirection, int pathSize, out List<Point> result)
+    public static IEnumerable<Point> Neighbors(this Point point)
     {
-        result = new List<Point>() { sourceCoordinate };
+        Point top = point + Direction4.Up.ToCoordinate();
+        Point left = point + Direction4.Left.ToCoordinate();
+        Point right = point + Direction4.Right.ToCoordinate();
+        Point down = point + Direction4.Down.ToCoordinate();
+
+        return new Point[] { down, left, top, right };
+    }
+
+    public static void GetRandomPath(Point sourceCoord, Direction4 sourceDirection, int pathSize, out List<Point> result)
+    {
+        result = new List<Point>() { sourceCoord };
 
         Direction4 currentDirection = sourceDirection;
 
@@ -167,15 +178,59 @@ public static class MapGrid
                 currentDirection = rightDirection;
             else if (nextCoord == leftCoord)
                 currentDirection = leftDirection;
-            //else if (nextCoordinate == currentCoord)
+            //else if (nextCoord == currentCoord)
             // keep direction
 
             result.Add(nextCoord);
         }
     }
+    public static void GetPathTo(Point sourceCoord, Point targetCoord, int pathSize, out List<Point> result)
+    {
+        result = new List<Point>() { sourceCoord };
 
+        Queue<Point> frontier = new Queue<Point>();
+        frontier.Enqueue(sourceCoord);
+        Dictionary<Point, Point> cameFrom = new Dictionary<Point, Point>() { { sourceCoord, default } };
+
+        // find path to target
+        while (frontier.Count > 0)
+        {
+            Point current = frontier.Dequeue();
+            if (current == targetCoord)
+                break;
+
+            foreach (var neighbor in current.Neighbors())
+            {
+                if (IsTileAWall(neighbor.X, neighbor.Y))
+                    continue;
+
+                if (!cameFrom.ContainsKey(neighbor))
+                {
+                    frontier.Enqueue(neighbor);
+                    cameFrom.Add(neighbor, current);
+                }
+            }
+        }
+
+        // building whole path
+        Stack<Point> path = new Stack<Point>();
+        path.Push(targetCoord);
+        while (cameFrom[path.Peek()] != sourceCoord)
+        {
+            Point previousCoord = cameFrom[path.Peek()];
+            path.Push(previousCoord);
+        }
+
+        // getting path up to 'pathSize' steps
+        while (result.Count < pathSize && path.Count > 0)
+        {
+            Point nextCoord = path.Pop();
+            result.Add(nextCoord);
+        }
+    }
     public static void GetPathAwayFrom(Point sourceCoord, Point targetCoord, int pathSize, out List<Point> result)
     {
-        result = new List<Point>();
+        result = new List<Point>() { sourceCoord };
+        // ...
     }
 }

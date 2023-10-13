@@ -17,7 +17,7 @@
 - [x] input management
 - [x] player lose condition: player x ghost collission, player life points zeroed, game over screen (bad)
 - [x] player win condition: collect all coins, game over screen (good)
-- [] ghost ai
+- [x] ghost ai
 - [] player power: collect special coin to power up for X seconds
 - [] enemy respawn
 - [] animation system - player, ghost, coins

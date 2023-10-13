@@ -10,7 +10,6 @@ public class TexRenderer
     private Texture2D m_Tex;
     private Rectangle m_TexRect;
     private Color m_SpriteColor;
-    public Point Position => m_TexBox.TopLeft;
 
     public TexRenderer(Texture2D sourceTex, Rectangle sourceRect, Point startingPosition = default)
     {
@@ -23,7 +22,7 @@ public class TexRenderer
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(m_Tex, Position.ToVector2(), m_TexRect, m_SpriteColor);
+        spriteBatch.Draw(m_Tex, m_TexBox.TopLeft.ToVector2(), m_TexRect, m_SpriteColor);
     }
 
     public void SetColor(Color newColor)

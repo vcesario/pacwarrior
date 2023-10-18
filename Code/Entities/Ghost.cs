@@ -14,7 +14,7 @@ public class Ghost
 
     public Ghost(Point position)
     {
-        Renderer = new TexRenderer(TextureManager.MainTex, TextureManager.GhostTexSourceRect, position);
+        Renderer = new TexRenderer(TextureManager.MainSheet, TextureManager.GhostTexSourceRect, position);
     }
 
     public void Draw(SpriteBatch spriteBatch)

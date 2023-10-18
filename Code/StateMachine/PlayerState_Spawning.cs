@@ -7,7 +7,7 @@ public class PlayerState_Spawning : PlayerState
 {
     protected override bool CanMove => true;
 
-    protected override bool CanCollectCoins => true;
+    protected override bool CanCollectThings => true;
 
     protected override bool CanCollideWithGhosts => false;
 

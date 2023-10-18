@@ -7,39 +7,47 @@ namespace topdown1;
 
 public static class CoinManager
 {
-    public static IEnumerable<Coin> Coins => m_Coins;
-    private static List<Coin> m_Coins;
-    public static event Action EventCollectedCoin;
+    public static IEnumerable<Collectible> Collectibles => m_Collectibles;
+    private static List<Collectible> m_Collectibles;
 
-    public static void Initialize(Point playerPosition = default)
+    public static void Initialize(Point playerPosition, PowerUpEntity[] powerUpEntities)
     {
-        m_Coins = new List<Coin>();
+        m_Collectibles = new List<Collectible>();
 
-        Point playerCoordinate = MapGrid.PositionToGridCoordinate(playerPosition);
+        HashSet<Point> skippableCoordinates = new HashSet<Point>();
+        foreach (var entity in powerUpEntities)
+        {
+            PowerUp powerUp = new PowerUp(entity.Position.ToPoint());
+            m_Collectibles.Add(powerUp);
+            skippableCoordinates.Add(MapGrid.PositionToGridCoordinate(powerUp.Position));
+        }
+
+        skippableCoordinates.Add(MapGrid.PositionToGridCoordinate(playerPosition));
         foreach (var coordinate in MapGrid.WalkableCoordinates)
         {
-            if (playerCoordinate == coordinate)
+            if (skippableCoordinates.Contains(coordinate))
                 continue;
 
-            m_Coins.Add(new Coin(MapGrid.GridCoordinateToPosition(coordinate)));
+            m_Collectibles.Add(new Coin(MapGrid.GridCoordinateToPosition(coordinate)));
         }
     }
 
     public static void Draw(SpriteBatch spriteBatch)
     {
-        foreach (var coin in m_Coins)
-            coin.Renderer.Draw(spriteBatch);
+        foreach (var collectible in m_Collectibles)
+            collectible.Renderer.Draw(spriteBatch);
     }
 
-    public static void Collect(Coin coin)
+    public static void Collect(Collectible collectible)
     {
-        if (coin == null)
+        if (collectible == null)
             return;
 
-        m_Coins.Remove(coin);
-        EventCollectedCoin?.Invoke();
+        collectible.Collect();
 
-        if (m_Coins.Count == 0)
+        m_Collectibles.Remove(collectible);
+
+        if (m_Collectibles.Count == 0)
         {
             ScreenManager.SendMessageToScreens(GameMessages.PlayerWonRound);
         }

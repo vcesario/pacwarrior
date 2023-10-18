@@ -8,7 +8,7 @@ public abstract class PlayerState : IState
     protected Player m_Player;
 
     protected abstract bool CanMove { get; }
-    protected abstract bool CanCollectCoins { get; }
+    protected abstract bool CanCollectThings { get; }
     protected abstract bool CanCollideWithGhosts { get; }
     protected abstract bool CanPause { get; }
 
@@ -56,17 +56,17 @@ public abstract class PlayerState : IState
     {
         BoundingBox playerBox = m_Player.GetColliderBox();
 
-        if (CanCollectCoins)
+        if (CanCollectThings)
         {
-            Coin collectedCoin = null;
-            foreach (var coin in CoinManager.Coins)
+            Collectible collected = null;
+            foreach (var collectible in CoinManager.Collectibles)
             {
-                if (playerBox.IsOverlapping(coin.GetColliderBox()))
+                if (playerBox.IsOverlapping(collectible.GetColliderBox()))
                 {
-                    collectedCoin = coin;
+                    collected = collectible;
                 }
             }
-            CoinManager.Collect(collectedCoin);
+            CoinManager.Collect(collected);
         }
 
         if (GameScreen.HasRoundEnded)

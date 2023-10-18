@@ -2,17 +2,11 @@ using Microsoft.Xna.Framework;
 
 namespace topdown1;
 
-public class Coin
+public class Coin : Collectible
 {
-    public TexRenderer Renderer;
-
-    public Coin(Point position)
+    public Coin(Point position) : base(position)
     {
-        Renderer = new TexRenderer(TextureManager.MainTex, TextureManager.Coin1TexSourceRect, position);
     }
 
-    public BoundingBox GetColliderBox()
-    {
-        return Renderer.Box;
-    }
+    protected override Rectangle m_SourceRect => TextureManager.CoinTexSourceRect;
 }

@@ -10,7 +10,7 @@ public class PlayerState_PoweredUp : PlayerState
 
     protected override bool CanMove => throw new System.NotImplementedException();
 
-    protected override bool CanCollectCoins => throw new System.NotImplementedException();
+    protected override bool CanCollectThings => throw new System.NotImplementedException();
 
     protected override bool CanCollideWithGhosts => throw new System.NotImplementedException();
 

@@ -42,7 +42,8 @@ public class GameScreen : AbstractScreen
         GhostAI.Initialize();
 
         // spawn coins
-        CoinManager.Initialize(m_Player.Position);
+        var powerUpEntities = m_World.GetEntities<PowerUpEntity>();
+        CoinManager.Initialize(m_Player.Position, powerUpEntities);
 
         // if there's an intro, initial pause to wait for intro to end
         if (ScreenManager.IsScreenOpen<RoundIntroScreen>())
@@ -116,6 +117,14 @@ public class GameScreen : AbstractScreen
             return 0;
 
         return m_Player.LivesRemaining;
+    }
+
+    public int GetScore()
+    {
+        if (m_Player == null)
+            return 0;
+
+        return m_Player.Score;
     }
 
     public override void ReceiveMessage(GameMessages message)

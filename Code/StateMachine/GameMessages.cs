@@ -6,4 +6,5 @@ public enum GameMessages
     PlayerLostRound,
     PlayerWonRound,
     PlayerPaused,
+    PlayerScoreChanged,
 }

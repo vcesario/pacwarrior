@@ -7,7 +7,7 @@ public class PlayerState_Dying : PlayerState
 {
     protected override bool CanMove => false;
 
-    protected override bool CanCollectCoins => false;
+    protected override bool CanCollectThings => false;
 
     protected override bool CanCollideWithGhosts => false;
 

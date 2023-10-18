@@ -11,13 +11,15 @@ public class HudScreen : AbstractScreen
     private Vector2 m_HudInfoScreenPosition;
     private string m_HudInfo;
     private int m_CurrentLives;
+    private string m_CurrentScoreString;
 
     public override void Load()
     {
         m_HudInfoFont = GameText.Font_OpenSans.GetFont(18);
         m_HudInfoScreenPosition = new Vector2(10, 10);
 
-        m_CurrentLives = GetLivesRemaining();
+        UpdateLives();
+        UpdateScore();
     }
 
     public override bool HandleInput(GameTime gameTime)
@@ -29,11 +31,9 @@ public class HudScreen : AbstractScreen
     {
         m_HudInfo = "LIVES: ";
         for (int i = 0; i < m_CurrentLives; i++)
-        {
             m_HudInfo += "[ * ]";
-        }
 
-        m_HudInfo += "\nSCORE: 000";
+        m_HudInfo += $"\nSCORE: {m_CurrentScoreString}";
 
         m_HudInfo += $"\nTIME: {GameScreen.RoundDuration.ToString(@"mm\:ss")}";
     }
@@ -54,7 +54,10 @@ public class HudScreen : AbstractScreen
         switch (message)
         {
             case GameMessages.PlayerLivesChanged:
-                m_CurrentLives = GetLivesRemaining();
+                UpdateLives();
+                break;
+            case GameMessages.PlayerScoreChanged:
+                UpdateScore();
                 break;
             default:
                 base.ReceiveMessage(message);
@@ -62,12 +65,21 @@ public class HudScreen : AbstractScreen
         }
     }
 
-    private int GetLivesRemaining()
+    private void UpdateLives()
     {
         GameScreen gameScreen = ScreenManager.GetScreen<GameScreen>();
         if (gameScreen == null)
-            return 0;
+            return;
 
-        return gameScreen.GetRemainingLives();
+        m_CurrentLives = gameScreen.GetRemainingLives();
+    }
+
+    private void UpdateScore()
+    {
+        GameScreen gameScreen = ScreenManager.GetScreen<GameScreen>();
+        if (gameScreen == null)
+            return;
+
+        m_CurrentScoreString = gameScreen.GetScore().ToString("D3");
     }
 }

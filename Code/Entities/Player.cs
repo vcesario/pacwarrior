@@ -21,6 +21,7 @@ public class Player
     private bool m_IsInvisible;
 
     public int LivesRemaining { get; private set; }
+    public int Score { get; private set; }
 
     public TexRenderer Renderer { get; private set; }
     public Point Position => Renderer.Box.TopLeft;
@@ -28,7 +29,7 @@ public class Player
 
     public Player(PlayerEntity entity)
     {
-        Renderer = new TexRenderer(TextureManager.MainTex, TextureManager.PlayerTexSourceRect, entity.Position.ToPoint());
+        Renderer = new TexRenderer(TextureManager.MainSheet, TextureManager.PlayerTexSourceRect, entity.Position.ToPoint());
         m_StartingPosition = Renderer.Box.TopLeft;
 
         m_ColliderSize = new Point(11, 11);
@@ -37,6 +38,7 @@ public class Player
         m_PlayerSpeed = 150f;
 
         LivesRemaining = 3;
+        Score = 0;
 
         State = new PlayerState_Default(this);
     }

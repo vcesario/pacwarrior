@@ -33,7 +33,7 @@ public static class GhostAI
         m_RoamPathSize = 10;
         m_ChasePathSize = 5;
         m_FleePathSize = 3;
-        m_StartingGhostAmount = 0;
+        m_StartingGhostAmount = 1;
         m_GhostSquareRange_Roaming = MathF.Pow(MapGrid.TileSize * 4, 2);
         m_GhostSquareRange_ChasingOrFleeing = MathF.Pow(MapGrid.TileSize * 9, 2);
 
@@ -89,7 +89,7 @@ public static class GhostAI
                 m_Ghosts[i].SetPosition(m_GhostPaths[i][1]);
                 m_GhostPaths[i].RemoveAt(0);
 
-                CalculateNextMovement(i, player);
+                DetermineNextMovement(i, player);
 
                 // set next direction
                 Direction4 nextDirection = MapGrid.PositionToGridCoordinate(m_GhostPaths[i][1] - m_GhostPaths[i][0]).ToDirection4();
@@ -109,7 +109,7 @@ public static class GhostAI
         }
     }
 
-    private static void CalculateNextMovement(int i, Player player)
+    private static void DetermineNextMovement(int i, Player player)
     {
         // determine ghost behavior
         float squareDistance = Vector2.DistanceSquared(m_Ghosts[i].Position.ToVector2(), player.Position.ToVector2());
@@ -182,6 +182,7 @@ public static class GhostAI
         if (m_GhostBehaviors[i] != GhostBehavior.Fleeing)
         {
             m_GhostBehaviors[i] = GhostBehavior.Fleeing;
+            m_Ghosts[i].Renderer.SetColor(Color.RoyalBlue);
 
             needNewPath = true;
         }
@@ -191,7 +192,10 @@ public static class GhostAI
 
         Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
         Point playerCoord = MapGrid.PositionToGridCoordinate(player.Position);
-        MapGrid.GetPathAwayFrom(currentCoord, playerCoord, m_FleePathSize, out List<Point> newPath);
+        Direction4 currentDirection = m_Ghosts[i].CurrentDirection;
+        // MapGrid.GetPathAwayFrom(currentCoord, playerCoord, m_FleePathSize, out List<Point> newPath);
+        MapGrid.GetRandomPath(currentCoord, currentDirection, m_RoamPathSize, out List<Point> newPath);
+
 
         m_GhostPaths[i].Clear();
         foreach (var coord in newPath)

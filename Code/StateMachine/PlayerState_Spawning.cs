@@ -18,13 +18,13 @@ public class PlayerState_Spawning : PlayerState
 
     public PlayerState_Spawning(Player player) : base(player)
     {
+        m_Duration = 3;
     }
 
     public override void Enter()
     {
         m_Player.ReturnToStartPosition();
 
-        m_Duration = 3;
         m_StartTime = GameScreen.RoundDuration;
 
         base.Enter();

@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework;
 
 namespace topdown1;
 
-public class Coin : Collectible
+public class Collectible_Coin : Collectible
 {
-    public Coin(Point position) : base(position)
+    public Collectible_Coin(Point position) : base(position)
     {
     }
 

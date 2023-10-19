@@ -59,14 +59,16 @@ public abstract class PlayerState : IState
         if (CanCollectThings)
         {
             Collectible collected = null;
-            foreach (var collectible in CoinManager.Collectibles)
+            foreach (var collectible in CollectibleManager.Collectibles)
             {
                 if (playerBox.IsOverlapping(collectible.GetColliderBox()))
                 {
                     collected = collectible;
+                    break;
                 }
             }
-            CoinManager.Collect(collected);
+
+            collected?.Collect(m_Player);
         }
 
         if (GameScreen.HasRoundEnded)
@@ -78,15 +80,7 @@ public abstract class PlayerState : IState
             {
                 if (playerBox.IsOverlapping(ghost.GetColliderBox()))
                 {
-                    // eliminate player
-                    if (this is PlayerState_PoweredUp)
-                    {
-                        // kill ghost
-                    }
-                    else
-                    {
-                        KillPlayer();
-                    }
+                    ProcessGhostCollision(ghost);
                 }
             }
         }
@@ -107,9 +101,14 @@ public abstract class PlayerState : IState
         }
     }
 
-    private void KillPlayer()
+    protected virtual void ProcessGhostCollision(Ghost ghost)
     {
         m_Player.SetState(new PlayerState_Dying(m_Player));
+    }
+
+    public virtual void ProcessPowerUpCollection()
+    {
+        m_Player.SetState(new PlayerState_PoweredUp(m_Player));
     }
 
     private void PauseGame()

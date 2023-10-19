@@ -43,7 +43,7 @@ public class GameScreen : AbstractScreen
 
         // spawn coins
         var powerUpEntities = m_World.GetEntities<PowerUpEntity>();
-        CoinManager.Initialize(m_Player.Position, powerUpEntities);
+        CollectibleManager.Initialize(m_Player.Position, powerUpEntities);
 
         // if there's an intro, initial pause to wait for intro to end
         if (ScreenManager.IsScreenOpen<RoundIntroScreen>())
@@ -76,7 +76,7 @@ public class GameScreen : AbstractScreen
     {
         MapGrid.Draw(spriteBatch);
 
-        CoinManager.Draw(spriteBatch);
+        CollectibleManager.Draw(spriteBatch);
 
         GhostAI.DrawGhosts(spriteBatch);
 

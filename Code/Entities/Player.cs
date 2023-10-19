@@ -192,4 +192,10 @@ public class Player
             ScreenManager.SendMessageToScreens(GameMessages.PlayerLivesChanged);
         }
     }
+
+    public void AddScore(int amount)
+    {
+        Score += amount;
+        ScreenManager.SendMessageToScreens(GameMessages.PlayerScoreChanged);
+    }
 }

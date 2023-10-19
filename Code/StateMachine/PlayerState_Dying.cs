@@ -75,4 +75,9 @@ public class PlayerState_Dying : PlayerState
     {
         ScreenManager.SendMessageToScreens(GameMessages.PlayerLostRound);
     }
+
+    public override void ProcessPowerUpCollection()
+    {
+        // do nothing
+    }
 }

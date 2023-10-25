@@ -231,6 +231,80 @@ public static class MapGrid
     public static void GetPathAwayFrom(Point sourceCoord, Point targetCoord, int pathSize, out List<Point> result)
     {
         result = new List<Point>() { sourceCoord };
-        // ...
+
+        List<Point> frontier = new List<Point>() { sourceCoord };
+        List<int> pathSizes = new List<int>() { getPathSize(sourceCoord) };
+        Dictionary<Point, Point> cameFrom = new Dictionary<Point, Point>() { { sourceCoord, default } };
+        List<Point> farthestCoords = new List<Point>();
+        Point current = default;
+
+        while (frontier.Count > 0)
+        {
+            // select next coord from frontier (pick a random one from the highest heuristic)
+            farthestCoords.Clear();
+            int highestSize = int.MinValue;
+            for (int i = 0; i < frontier.Count; i++)
+            {
+                int thisPathSize = pathSizes[i];
+                if (thisPathSize == highestSize)
+                {
+                    farthestCoords.Add(frontier[i]);
+                }
+                else if (thisPathSize > highestSize)
+                {
+                    farthestCoords.Clear();
+                    highestSize = thisPathSize;
+                    farthestCoords.Add(frontier[i]);
+                }
+                else // thisPathSize < highestSize
+                {
+                    // do nothing
+                }
+            }
+
+            current = farthestCoords[GameStartup.RandomGenerator.Next(farthestCoords.Count)];
+            int index = frontier.IndexOf(current);
+            frontier.Remove(current);
+            if (highestSize == pathSize) // if heuristic is equal to path size
+                break;
+
+            foreach (var neighbor in current.Neighbors())
+            {
+                if (IsTileAWall(neighbor.X, neighbor.Y))
+                    continue;
+
+                if (!cameFrom.ContainsKey(neighbor))
+                {
+                    frontier.Add(neighbor);
+                    cameFrom.Add(neighbor, current);
+
+                    pathSizes.Add(getPathSize(neighbor));
+                }
+            }
+        }
+
+        // building whole path
+        Stack<Point> path = new Stack<Point>();
+        path.Push(targetCoord);
+        while (cameFrom[path.Peek()] != sourceCoord)
+        {
+            Point previousCoord = cameFrom[path.Peek()];
+            path.Push(previousCoord);
+        }
+
+        // getting path up to 'pathSize' steps
+        while (result.Count < pathSize && path.Count > 0)
+        {
+            Point nextCoord = path.Pop();
+            result.Add(nextCoord);
+        }
+
+        // heuristic function
+        int getPathSize(Point fromCoord)
+        {
+            int xDiff = (int)MathF.Abs(fromCoord.X - targetCoord.X);
+            int yDiff = (int)MathF.Abs(fromCoord.Y - targetCoord.Y);
+            return xDiff + yDiff + 1;
+        }
     }
 }

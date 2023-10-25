@@ -192,10 +192,7 @@ public static class GhostAI
 
         Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
         Point playerCoord = MapGrid.PositionToGridCoordinate(player.Position);
-        Direction4 currentDirection = m_Ghosts[i].CurrentDirection;
-        // MapGrid.GetPathAwayFrom(currentCoord, playerCoord, m_FleePathSize, out List<Point> newPath);
-        MapGrid.GetRandomPath(currentCoord, currentDirection, m_RoamPathSize, out List<Point> newPath);
-
+        MapGrid.GetPathAwayFrom(currentCoord, playerCoord, m_FleePathSize, out List<Point> newPath);
 
         m_GhostPaths[i].Clear();
         foreach (var coord in newPath)

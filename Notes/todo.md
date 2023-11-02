@@ -18,9 +18,12 @@
 - [x] player lose condition: player x ghost collission, player life points zeroed, game over screen (bad)
 - [x] player win condition: collect all coins, game over screen (good)
 - [x] ghost ai
-- [] player power: collect special coin to power up for X seconds
+- [x] player power: collect special coin to power up for X seconds
 - [] enemy respawn
 - [] animation system - player, ghost, coins
+- [] player 2
+- [] player bot
+- [] title: play solo, vs bot, vs p2, settings, close
 
 #### ART
 

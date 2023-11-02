@@ -32,8 +32,8 @@ public static class GhostAI
         m_GhostSpeed = 100;
         m_RoamPathSize = 10;
         m_ChasePathSize = 5;
-        m_FleePathSize = 3;
-        m_StartingGhostAmount = 1;
+        m_FleePathSize = 4;
+        m_StartingGhostAmount = 5;
         m_GhostSquareRange_Roaming = MathF.Pow(MapGrid.TileSize * 4, 2);
         m_GhostSquareRange_ChasingOrFleeing = MathF.Pow(MapGrid.TileSize * 9, 2);
 

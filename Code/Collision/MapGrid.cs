@@ -232,60 +232,46 @@ public static class MapGrid
     {
         result = new List<Point>() { sourceCoord };
 
-        List<Point> frontier = new List<Point>() { sourceCoord };
-        List<int> pathSizes = new List<int>() { getPathSize(sourceCoord) };
+        List<Tuple<Point, int>> frontier = new List<Tuple<Point, int>>() { new Tuple<Point, int>(sourceCoord, 0) };
         Dictionary<Point, Point> cameFrom = new Dictionary<Point, Point>() { { sourceCoord, default } };
-        List<Point> farthestCoords = new List<Point>();
-        Point current = default;
+        Tuple<Point, int> current;
 
         while (frontier.Count > 0)
         {
-            // select next coord from frontier (pick a random one from the highest heuristic)
-            farthestCoords.Clear();
-            int highestSize = int.MinValue;
-            for (int i = 0; i < frontier.Count; i++)
-            {
-                int thisPathSize = pathSizes[i];
-                if (thisPathSize == highestSize)
-                {
-                    farthestCoords.Add(frontier[i]);
-                }
-                else if (thisPathSize > highestSize)
-                {
-                    farthestCoords.Clear();
-                    highestSize = thisPathSize;
-                    farthestCoords.Add(frontier[i]);
-                }
-                else // thisPathSize < highestSize
-                {
-                    // do nothing
-                }
-            }
-
-            current = farthestCoords[GameStartup.RandomGenerator.Next(farthestCoords.Count)];
-            int index = frontier.IndexOf(current);
-            frontier.Remove(current);
-            if (highestSize == pathSize) // if heuristic is equal to path size
+            if (frontier[0].Item2 == pathSize)
                 break;
 
-            foreach (var neighbor in current.Neighbors())
+            current = frontier[0];
+            frontier.Remove(current);
+
+            foreach (var neighbor in current.Item1.Neighbors())
             {
                 if (IsTileAWall(neighbor.X, neighbor.Y))
                     continue;
 
                 if (!cameFrom.ContainsKey(neighbor))
                 {
-                    frontier.Add(neighbor);
-                    cameFrom.Add(neighbor, current);
-
-                    pathSizes.Add(getPathSize(neighbor));
+                    frontier.Add(new Tuple<Point, int>(neighbor, current.Item2 + 1));
+                    cameFrom.Add(neighbor, current.Item1);
                 }
+            }
+        }
+
+        int highestDistance = int.MinValue;
+        Point farthest = default;
+        for (int i = 0; i < frontier.Count; i++)
+        {
+            int thisDist = getDistance(frontier[i].Item1);
+            if (thisDist > highestDistance)
+            {
+                highestDistance = thisDist;
+                farthest = frontier[i].Item1;
             }
         }
 
         // building whole path
         Stack<Point> path = new Stack<Point>();
-        path.Push(targetCoord);
+        path.Push(farthest);
         while (cameFrom[path.Peek()] != sourceCoord)
         {
             Point previousCoord = cameFrom[path.Peek()];
@@ -293,18 +279,15 @@ public static class MapGrid
         }
 
         // getting path up to 'pathSize' steps
-        while (result.Count < pathSize && path.Count > 0)
-        {
-            Point nextCoord = path.Pop();
-            result.Add(nextCoord);
-        }
+        while (path.Count > 0)
+            result.Add(path.Pop());
 
         // heuristic function
-        int getPathSize(Point fromCoord)
+        int getDistance(Point fromCoord)
         {
             int xDiff = (int)MathF.Abs(fromCoord.X - targetCoord.X);
             int yDiff = (int)MathF.Abs(fromCoord.Y - targetCoord.Y);
-            return xDiff + yDiff + 1;
+            return xDiff + yDiff;
         }
     }
 }

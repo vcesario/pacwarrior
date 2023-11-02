@@ -37,4 +37,9 @@ public static class Extensions
 
         return val.ToArray();
     }
+
+    public static Color RandomColor()
+    {
+        return new Color(GameStartup.RandomGenerator.NextSingle(), GameStartup.RandomGenerator.NextSingle(), GameStartup.RandomGenerator.NextSingle());
+    }
 }

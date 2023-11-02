@@ -6,11 +6,8 @@ namespace topdown1;
 public class PlayerState_Dying : PlayerState
 {
     protected override bool CanMove => false;
-
     protected override bool CanCollectThings => false;
-
     protected override bool CanCollideWithGhosts => false;
-
     protected override bool CanPause => true;
 
     private TimeSpan m_DeathTime;

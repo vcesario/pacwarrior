@@ -6,11 +6,8 @@ namespace topdown1;
 public class PlayerState_Spawning : PlayerState
 {
     protected override bool CanMove => true;
-
     protected override bool CanCollectThings => true;
-
     protected override bool CanCollideWithGhosts => false;
-
     protected override bool CanPause => true;
 
     private float m_Duration;

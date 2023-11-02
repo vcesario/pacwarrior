@@ -257,14 +257,14 @@ public static class MapGrid
             }
         }
 
-        int highestDistance = int.MinValue;
+        int highestSummation = int.MinValue;
         Point farthest = default;
         for (int i = 0; i < frontier.Count; i++)
         {
-            int thisDist = getDistance(frontier[i].Item1);
-            if (thisDist > highestDistance)
+            int thisSummation = getDistanceSummation(frontier[i].Item1);
+            if (thisSummation > highestSummation)
             {
-                highestDistance = thisDist;
+                highestSummation = thisSummation;
                 farthest = frontier[i].Item1;
             }
         }
@@ -288,6 +288,18 @@ public static class MapGrid
             int xDiff = (int)MathF.Abs(fromCoord.X - targetCoord.X);
             int yDiff = (int)MathF.Abs(fromCoord.Y - targetCoord.Y);
             return xDiff + yDiff;
+        }
+
+        int getDistanceSummation(Point fromCoord)
+        {
+            int sum = 0;
+            Point step = fromCoord;
+            while (step != sourceCoord)
+            {
+                sum += getDistance(step);
+                step = cameFrom[step];
+            }
+            return sum;
         }
     }
 }

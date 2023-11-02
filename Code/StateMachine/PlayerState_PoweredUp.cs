@@ -5,21 +5,19 @@ namespace topdown1;
 
 public class PlayerState_PoweredUp : PlayerState
 {
+
+    protected override bool CanMove => true;
+    protected override bool CanCollectThings => true;
+    protected override bool CanCollideWithGhosts => true;
+    protected override bool CanPause => true;
+
     private float m_Duration;
     private TimeSpan m_StartTime;
 
     public PlayerState_PoweredUp(Player player) : base(player)
     {
-        m_Duration = 5;
+        m_Duration = 10;
     }
-
-    protected override bool CanMove => true;
-
-    protected override bool CanCollectThings => true;
-
-    protected override bool CanCollideWithGhosts => true;
-
-    protected override bool CanPause => true;
 
     public override void Enter()
     {
@@ -49,7 +47,7 @@ public class PlayerState_PoweredUp : PlayerState
 
     protected override void ProcessGhostCollision(Ghost ghost)
     {
-        // kill ghost
+        GhostAI.Kill(ghost, m_Player);
     }
 
     public override void ProcessPowerUpCollection()

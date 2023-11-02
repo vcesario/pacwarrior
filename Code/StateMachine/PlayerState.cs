@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace topdown1;
@@ -11,6 +12,8 @@ public abstract class PlayerState : IState
     protected abstract bool CanCollectThings { get; }
     protected abstract bool CanCollideWithGhosts { get; }
     protected abstract bool CanPause { get; }
+
+    private static List<Ghost> m_CollidedGhosts = new List<Ghost>();
 
     public PlayerState(Player player)
     {
@@ -80,8 +83,16 @@ public abstract class PlayerState : IState
             {
                 if (playerBox.IsOverlapping(ghost.GetColliderBox()))
                 {
-                    ProcessGhostCollision(ghost);
+                    m_CollidedGhosts.Add(ghost);
                 }
+            }
+
+            if (m_CollidedGhosts.Count > 0)
+            {
+                foreach (var ghost in m_CollidedGhosts)
+                    ProcessGhostCollision(ghost);
+
+                m_CollidedGhosts.Clear();
             }
         }
     }

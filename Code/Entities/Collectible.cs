@@ -12,9 +12,13 @@ public abstract class Collectible
 
     public event Action<Collectible> EventWasCollected;
 
+    private int m_ScoreAmount;
+
     public Collectible(Point position)
     {
         Renderer = new TexRenderer(TextureManager.MainSheet, m_SourceRect, position);
+
+        m_ScoreAmount = 1;
     }
 
     public BoundingBox GetColliderBox()
@@ -26,7 +30,7 @@ public abstract class Collectible
     {
         Internal_Collect(player);
 
-        player.AddScore(1);
+        player.AddScore(m_ScoreAmount);
         EventWasCollected?.Invoke(this);
     }
 

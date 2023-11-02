@@ -25,6 +25,7 @@ public static class GhostAI
     private static int m_ChasePathSize;
     private static int m_FleePathSize;
     private static int m_StartingGhostAmount;
+    private static int m_KillScore;
 
     public static void Initialize()
     {
@@ -34,6 +35,7 @@ public static class GhostAI
         m_ChasePathSize = 5;
         m_FleePathSize = 4;
         m_StartingGhostAmount = 5;
+        m_KillScore = 5;
         m_GhostSquareRange_Roaming = MathF.Pow(MapGrid.TileSize * 4, 2);
         m_GhostSquareRange_ChasingOrFleeing = MathF.Pow(MapGrid.TileSize * 9, 2);
 
@@ -116,17 +118,24 @@ public static class GhostAI
         float correctSquareRangeToCheckAgainst = m_GhostBehaviors[i] == GhostBehavior.Roaming ? m_GhostSquareRange_Roaming : m_GhostSquareRange_ChasingOrFleeing;
         bool isPlayerInRange = squareDistance <= correctSquareRangeToCheckAgainst;
 
-        if (!GameScreen.HasRoundEnded && isPlayerInRange && player.State is PlayerState_Default)
-        {
-            SetGhostToChasing(i, player);
-        }
-        else if (!GameScreen.HasRoundEnded && isPlayerInRange && player.State is PlayerState_PoweredUp)
-        {
-            SetGhostToFleeing(i, player);
-        }
-        else  // if distance large enough or player is in untargetable state, make ghost roam
+        if (GameScreen.HasRoundEnded || !isPlayerInRange)
         {
             SetGhostToRoaming(i);
+        }
+        else
+        {
+            if (player.State is PlayerState_Default)
+            {
+                SetGhostToChasing(i, player);
+            }
+            else if (player.State is PlayerState_PoweredUp)
+            {
+                SetGhostToFleeing(i, player);
+            }
+            else
+            {
+                SetGhostToRoaming(i);
+            }
         }
     }
 
@@ -205,5 +214,15 @@ public static class GhostAI
         {
             m_Ghosts[i].Draw(spriteBatch);
         }
+    }
+
+    public static void Kill(Ghost ghost, Player player)
+    {
+        int index = m_Ghosts.IndexOf(ghost);
+        m_Ghosts.Remove(ghost);
+        m_GhostBehaviors.RemoveAt(index);
+        m_GhostPaths.RemoveAt(index);
+
+        player.AddScore(m_KillScore);
     }
 }

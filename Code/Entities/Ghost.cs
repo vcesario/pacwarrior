@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,9 +13,17 @@ public class Ghost
 
     public TexRenderer Renderer;
 
-    public Ghost(Point position)
+    public GhostState State { get; private set; }
+
+    // *** brain?
+    public List<Point> Path;
+    // ***
+
+    public Ghost(Point position, Player player)
     {
         Renderer = new TexRenderer(TextureManager.MainSheet, TextureManager.GhostTexSourceRect, position);
+
+        State = new GhostState_Roaming(this, player);
     }
 
     public void Draw(SpriteBatch spriteBatch)

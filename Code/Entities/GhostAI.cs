@@ -18,10 +18,10 @@ public static class GhostAI
     private static float m_GhostSquareRange_Roaming;
     private static float m_GhostSquareRange_ChasingOrFleeing;
     private static float m_GhostSpeed;
-    private static float m_MovementDuration;
-    private static TimeSpan m_MovementStartTime;
+    public static float m_MovementDuration { get; private set; }
+    public static TimeSpan m_MovementStartTime;
 
-    private static int m_RoamPathSize;
+    public static int RoamPathSize { get; private set; }
     private static int m_ChasePathSize;
     private static int m_FleePathSize;
     private static int m_StartingGhostAmount;
@@ -31,7 +31,7 @@ public static class GhostAI
     {
         // initialize balancing values
         m_GhostSpeed = 100;
-        m_RoamPathSize = 10;
+        RoamPathSize = 10;
         m_ChasePathSize = 5;
         m_FleePathSize = 4;
         m_StartingGhostAmount = 5;
@@ -156,7 +156,7 @@ public static class GhostAI
         Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghosts[i].Position);
         Direction4 currentDirection = m_Ghosts[i].CurrentDirection;
 
-        MapGrid.GetRandomPath(currentCoord, currentDirection, m_RoamPathSize, out List<Point> newPath);
+        MapGrid.GetRandomPath(currentCoord, currentDirection, RoamPathSize, out List<Point> newPath);
 
         m_GhostPaths[i].Clear();
         foreach (var coord in newPath)

@@ -42,3 +42,11 @@ movimentando fantasmas:
     caso o comportamento tenha mudado, joga a lista fora e calcula uma nova para aquele comportamento
         só precisa jogar a lista fora mesmo se for de roam pra chase, roam pra flee, chase pra flee ou flee pra chase. de flee e chase pra roam, não preciso me preocupar em jogar a lista fora
     
+------
+
+refatorando fantasmas:
+
+a classe GhostAI não esta fazendo muito sentido. a ideia era processar todos os fantasmas em um batch pra economizar volume de memória e taxa de acesso de memória.
+
+mas o que acabou acontecendo foi que eu criei metodos individuais dentro da classe geral.
+a classe GhostAI está com proposito duplicado: gerenciar o conjunto ativo de ghosts na cena, e tambem cuidar do comportamento dos ghosts. talvez faria mais sentido separar GhostAI em: GhostManager e GhostBrain

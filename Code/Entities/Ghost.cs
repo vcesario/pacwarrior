@@ -19,11 +19,12 @@ public class Ghost
     public List<Point> Path;
     // ***
 
-    public Ghost(Point position, Player player)
+    public Ghost(Point position)
     {
         Renderer = new TexRenderer(TextureManager.MainSheet, TextureManager.GhostTexSourceRect, position);
+        Path = new List<Point>();
 
-        State = new GhostState_Roaming(this, player);
+        SetState(new GhostState_Roaming(this));
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -49,5 +50,12 @@ public class Ghost
     public BoundingBox GetColliderBox()
     {
         return Renderer.Box; // @TODO: add a proper hit box maybe, instead of the graphics one
+    }
+
+    public void SetState(GhostState newState)
+    {
+        State?.Exit();
+        State = newState;
+        State?.Enter();
     }
 }

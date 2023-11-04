@@ -16,13 +16,14 @@ public class PlayerState_PoweredUp : PlayerState
 
     public PlayerState_PoweredUp(Player player) : base(player)
     {
-        m_Duration = 10;
     }
 
     public override void Enter()
     {
         m_Player.Renderer.SetColor(Color.DarkRed);
+
         m_StartTime = GameScreen.RoundDuration;
+        m_Duration = 10;
 
         base.Enter();
     }

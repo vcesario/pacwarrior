@@ -15,8 +15,6 @@ public class GameScreen : AbstractScreen
     private LDtkWorld m_World;
     private List<LDtkLevel> m_LevelList;
 
-    private Player m_Player;
-
     public static TimeSpan RoundDuration { get; private set; }
     public bool m_IsPaused;
     public static bool HasRoundEnded { get; private set; }
@@ -36,14 +34,14 @@ public class GameScreen : AbstractScreen
 
         // create player
         var playerEntity = m_World.GetEntity<PlayerEntity>();
-        m_Player = new Player(playerEntity);
+        RoundInfo.SetPlayers(new Player(playerEntity));
 
         // initialize enemies
         GhostAI.Initialize();
 
         // spawn coins
         var powerUpEntities = m_World.GetEntities<PowerUpEntity>();
-        CollectibleManager.Initialize(m_Player.Position, powerUpEntities);
+        CollectibleManager.Initialize(RoundInfo.GetPlayer(0).Position, powerUpEntities);
 
         // if there's an intro, initial pause to wait for intro to end
         if (ScreenManager.IsScreenOpen<RoundIntroScreen>())
@@ -55,7 +53,7 @@ public class GameScreen : AbstractScreen
 
     public override bool HandleInput(GameTime gameTime)
     {
-        m_Player.State.ProcessInput(gameTime);
+        RoundInfo.GetPlayer(0).State.ProcessInput(gameTime);
 
         return true;
     }
@@ -67,13 +65,13 @@ public class GameScreen : AbstractScreen
 
         RoundDuration += gameTime.ElapsedGameTime;
 
-        // GhostAI.UpdateBrain(m_Player);
-        foreach (var ghost in GhostAI.Ghosts)
-        {
-            ghost.State.Update(gameTime);
-        }
+        GhostAI.Update(gameTime);
+        // foreach (var ghost in GhostAI.Ghosts)
+        // {
+        //     ghost.State.Update(gameTime);
+        // }
 
-        m_Player.State.Update(gameTime);
+        RoundInfo.GetPlayer(0).State.Update(gameTime);
     }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -84,7 +82,7 @@ public class GameScreen : AbstractScreen
 
         GhostAI.DrawGhosts(spriteBatch);
 
-        m_Player.Draw(spriteBatch);
+        RoundInfo.GetPlayer(0).Draw(spriteBatch);
     }
 
     private void StartGame()
@@ -117,18 +115,18 @@ public class GameScreen : AbstractScreen
 
     public int GetRemainingLives()
     {
-        if (m_Player == null)
+        if (RoundInfo.GetPlayer(0) == null)
             return 0;
 
-        return m_Player.LivesRemaining;
+        return RoundInfo.GetPlayer(0).LivesRemaining;
     }
 
     public int GetScore()
     {
-        if (m_Player == null)
+        if (RoundInfo.GetPlayer(0) == null)
             return 0;
 
-        return m_Player.Score;
+        return RoundInfo.GetPlayer(0).Score;
     }
 
     public override void ReceiveMessage(GameMessages message)

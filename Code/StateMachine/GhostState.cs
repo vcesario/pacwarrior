@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
@@ -6,25 +7,28 @@ namespace topdown1;
 public abstract class GhostState : IState
 {
     protected Ghost m_Ghost;
-    protected Player m_Player;
 
-    private float m_MovePercent;
+    protected float ViewRangeSquared { get; set; }
+    protected int PathSize { get; set; } = 10;
 
-    public GhostState(Ghost ghost, Player player)
+    public GhostState(Ghost ghost)
     {
         m_Ghost = ghost;
-        m_Player = player;
     }
 
-    public void Update(GameTime gameTime)
+    public void Update(GameTime gameTime, float movePercent)
     {
+        Console.WriteLine("??");
         // move ghosts
-        if (m_MovePercent >= 1)
+        if (movePercent >= 1)
         {
             m_Ghost.SetPosition(m_Ghost.Path[1]);
             m_Ghost.Path.RemoveAt(0);
 
-            RefreshPath(m_Player);
+            RefreshState();
+
+            if (m_Ghost.Path.Count < 2)
+                m_Ghost.State.RefreshPath(); // instead of simply calling "RefreshPath", I'm doing this to ensure that, in case the ghost changes state in the RefreshState(), it still calls the correct overriden RefreshPath
 
             // set next direction
             Direction4 nextDirection = MapGrid.PositionToGridCoordinate(m_Ghost.Path[1] - m_Ghost.Path[0]).ToDirection4();
@@ -32,7 +36,7 @@ public abstract class GhostState : IState
         }
         else
         {
-            Vector2 newPosition = Vector2.Lerp(m_Ghost.Path[0].ToVector2(), m_Ghost.Path[1].ToVector2(), m_MovePercent);
+            Vector2 newPosition = Vector2.Lerp(m_Ghost.Path[0].ToVector2(), m_Ghost.Path[1].ToVector2(), movePercent);
             m_Ghost.SetPosition(newPosition.ToPoint());
         }
     }
@@ -46,22 +50,52 @@ public abstract class GhostState : IState
 
     }
 
-    public void SetMovePercent(float value)
+    private void RefreshState()
     {
-        m_MovePercent = value;
+        Player player = RoundInfo.GetPlayer(0);
+        float squareDistance = Vector2.DistanceSquared(m_Ghost.Position.ToVector2(), player.Position.ToVector2());
+        bool isPlayerInRange = squareDistance <= ViewRangeSquared;
+
+        if (GameScreen.HasRoundEnded || !isPlayerInRange)
+        {
+            Roam();
+        }
+        else
+        {
+            if (player.State is PlayerState_Default)
+            {
+                Chase();
+            }
+            else if (player.State is PlayerState_PoweredUp)
+            {
+                Flee();
+            }
+            else
+            {
+                Roam();
+            }
+        }
     }
 
-    public virtual void RefreshPath(Player player)
+    protected virtual void Roam()
     {
-        bool needNewPath = m_Ghost.Path.Count < 2;
+        m_Ghost.SetState(new GhostState_Roaming(m_Ghost));
+    }
+    protected virtual void Chase()
+    {
+        m_Ghost.SetState(new GhostState_Chasing(m_Ghost));
+    }
+    protected virtual void Flee()
+    {
+        m_Ghost.SetState(new GhostState_Fleeing(m_Ghost));
+    }
 
-        if (!needNewPath)
-            return;
-
+    public virtual void RefreshPath()
+    {
         Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghost.Position);
         Direction4 currentDirection = m_Ghost.CurrentDirection;
 
-        MapGrid.GetRandomPath(currentCoord, currentDirection, GhostAI.RoamPathSize, out List<Point> newPath);
+        MapGrid.GetRandomPath(currentCoord, currentDirection, PathSize, out List<Point> newPath);
 
         m_Ghost.Path.Clear();
         foreach (var coord in newPath)

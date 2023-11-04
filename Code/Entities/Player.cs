@@ -40,7 +40,7 @@ public class Player
         LivesRemaining = 3;
         Score = 0;
 
-        State = new PlayerState_Default(this);
+        SetState(new PlayerState_Default(this));
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -169,9 +169,9 @@ public class Player
 
     public void SetState(PlayerState newState)
     {
-        State.Exit();
+        State?.Exit();
         State = newState;
-        State.Enter();
+        State?.Enter();
     }
 
     public void ReturnToStartPosition()

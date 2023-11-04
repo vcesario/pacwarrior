@@ -15,7 +15,6 @@ public class PlayerState_Spawning : PlayerState
 
     public PlayerState_Spawning(Player player) : base(player)
     {
-        m_Duration = 3;
     }
 
     public override void Enter()
@@ -23,6 +22,7 @@ public class PlayerState_Spawning : PlayerState
         m_Player.ReturnToStartPosition();
 
         m_StartTime = GameScreen.RoundDuration;
+        m_Duration = 3;
 
         base.Enter();
     }

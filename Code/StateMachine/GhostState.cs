@@ -16,19 +16,21 @@ public abstract class GhostState : IState
         m_Ghost = ghost;
     }
 
-    public void Update(GameTime gameTime, float movePercent)
+    public virtual void Update(GameTime gameTime, float movePercent)
     {
-        Console.WriteLine("??");
         // move ghosts
         if (movePercent >= 1)
         {
+            // end current step
             m_Ghost.SetPosition(m_Ghost.Path[1]);
             m_Ghost.Path.RemoveAt(0);
 
+            // recalculate
             RefreshState();
 
+            // begin next step
             if (m_Ghost.Path.Count < 2)
-                m_Ghost.State.RefreshPath(); // instead of simply calling "RefreshPath", I'm doing this to ensure that, in case the ghost changes state in the RefreshState(), it still calls the correct overriden RefreshPath
+                m_Ghost.State.RefreshPath(); // instead of simply calling "RefreshPath", I'm doing this to ensure that, in case RefreshState() triggers a change of state, it still calls the correct overriden RefreshPath
 
             // set next direction
             Direction4 nextDirection = MapGrid.PositionToGridCoordinate(m_Ghost.Path[1] - m_Ghost.Path[0]).ToDirection4();
@@ -88,6 +90,10 @@ public abstract class GhostState : IState
     protected virtual void Flee()
     {
         m_Ghost.SetState(new GhostState_Fleeing(m_Ghost));
+    }
+    public virtual void Die()
+    {
+        m_Ghost.SetState(new GhostState_Returning(m_Ghost));
     }
 
     public virtual void RefreshPath()

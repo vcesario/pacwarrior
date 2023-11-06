@@ -17,11 +17,13 @@ public static class GhostAI
     private static int m_StartingGhostAmount;
     private static int m_KillScore;
 
-    public static void Initialize()
+    public static List<Point> SpawnCoords;
+
+    public static void Initialize(EnemySpawnerEntity[] enemySpawners)
     {
         // initialize balancing values
         m_GhostSpeed = 100;
-        m_StartingGhostAmount = 1;
+        m_StartingGhostAmount = 7;
         m_KillScore = 5;
 
         // calculate viable positions for spawning ghosts
@@ -43,6 +45,10 @@ public static class GhostAI
 
             m_Ghosts.Add(newGhost);
         }
+
+        SpawnCoords = new List<Point>();
+        foreach (var entity in enemySpawners)
+            SpawnCoords.Add(MapGrid.PositionToGridCoordinate(entity.Position.ToPoint()));
 
         // ** calculate movement duration
         m_MovementDuration = MapGrid.TileSize / m_GhostSpeed; // approximate formula to match player's
@@ -81,8 +87,7 @@ public static class GhostAI
 
     public static void Kill(Ghost ghost, Player player)
     {
-        int index = m_Ghosts.IndexOf(ghost);
-        m_Ghosts.Remove(ghost);
+        ghost.State.Die();
 
         player.AddScore(m_KillScore);
     }

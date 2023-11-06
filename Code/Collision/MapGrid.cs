@@ -184,19 +184,26 @@ public static class MapGrid
             result.Add(nextCoord);
         }
     }
+
     public static void GetPathTo(Point sourceCoord, Point targetCoord, int pathSize, out List<Point> result)
+    {
+        GetPathToAny(sourceCoord, new List<Point>() { targetCoord }, pathSize, out result);
+    }
+
+    public static void GetPathToAny(Point sourceCoord, List<Point> targetCoords, int pathSize, out List<Point> result)
     {
         result = new List<Point>() { sourceCoord };
 
         Queue<Point> frontier = new Queue<Point>();
         frontier.Enqueue(sourceCoord);
         Dictionary<Point, Point> cameFrom = new Dictionary<Point, Point>() { { sourceCoord, default } };
+        Point current = default;
 
         // find path to target
         while (frontier.Count > 0)
         {
-            Point current = frontier.Dequeue();
-            if (current == targetCoord)
+            current = frontier.Dequeue();
+            if (targetCoords.Contains(current))
                 break;
 
             foreach (var neighbor in current.Neighbors())
@@ -214,7 +221,7 @@ public static class MapGrid
 
         // building whole path
         Stack<Point> path = new Stack<Point>();
-        path.Push(targetCoord);
+        path.Push(current);
         while (cameFrom[path.Peek()] != sourceCoord)
         {
             Point previousCoord = cameFrom[path.Peek()];

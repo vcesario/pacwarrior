@@ -37,7 +37,8 @@ public class GameScreen : AbstractScreen
         RoundInfo.SetPlayers(new Player(playerEntity));
 
         // initialize enemies
-        GhostAI.Initialize();
+        var enemySpawnerEntities = m_World.GetEntities<EnemySpawnerEntity>();
+        GhostAI.Initialize(enemySpawnerEntities);
 
         // spawn coins
         var powerUpEntities = m_World.GetEntities<PowerUpEntity>();

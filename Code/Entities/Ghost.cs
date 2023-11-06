@@ -19,17 +19,21 @@ public class Ghost
     public List<Point> Path;
     // ***
 
+    public bool IsVisible { get; private set; }
+
     public Ghost(Point position)
     {
         Renderer = new TexRenderer(TextureManager.MainSheet, TextureManager.GhostTexSourceRect, position);
         Path = new List<Point>();
+        IsVisible = true;
 
         SetState(new GhostState_Roaming(this));
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        Renderer.Draw(spriteBatch);
+        if (IsVisible)
+            Renderer.Draw(spriteBatch);
 
         if (GameStartup.DebugEnabled)
         {
@@ -57,5 +61,10 @@ public class Ghost
         State?.Exit();
         State = newState;
         State?.Enter();
+    }
+
+    public void SetVisibility(bool value)
+    {
+        IsVisible = value;
     }
 }

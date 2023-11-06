@@ -56,7 +56,7 @@ public class GhostState_Returning : GhostState
     public override void RefreshPath()
     {
         Point currentCoord = MapGrid.PositionToGridCoordinate(m_Ghost.Position);
-        MapGrid.GetPathToAny(currentCoord, GhostAI.SpawnCoords, PathSize, out List<Point> newPath);
+        MapGrid.GetPathToAny(currentCoord, GhostManager.SpawnCoords, PathSize, out List<Point> newPath);
 
         m_Ghost.Path.Clear();
         foreach (var coord in newPath)

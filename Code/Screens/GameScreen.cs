@@ -38,7 +38,7 @@ public class GameScreen : AbstractScreen
 
         // initialize enemies
         var enemySpawnerEntities = m_World.GetEntities<EnemySpawnerEntity>();
-        GhostAI.Initialize(enemySpawnerEntities);
+        GhostManager.Initialize(enemySpawnerEntities);
 
         // spawn coins
         var powerUpEntities = m_World.GetEntities<PowerUpEntity>();
@@ -66,7 +66,7 @@ public class GameScreen : AbstractScreen
 
         RoundDuration += gameTime.ElapsedGameTime;
 
-        GhostAI.Update(gameTime);
+        GhostManager.Update(gameTime);
         // foreach (var ghost in GhostAI.Ghosts)
         // {
         //     ghost.State.Update(gameTime);
@@ -81,7 +81,7 @@ public class GameScreen : AbstractScreen
 
         CollectibleManager.Draw(spriteBatch);
 
-        GhostAI.DrawGhosts(spriteBatch);
+        GhostManager.DrawGhosts(spriteBatch);
 
         RoundInfo.GetPlayer(0).Draw(spriteBatch);
     }

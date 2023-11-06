@@ -48,7 +48,7 @@ public class PlayerState_PoweredUp : PlayerState
 
     protected override void ProcessGhostCollision(Ghost ghost)
     {
-        GhostAI.Kill(ghost, m_Player);
+        GhostManager.Kill(ghost, m_Player);
     }
 
     public override void ProcessPowerUpCollection()

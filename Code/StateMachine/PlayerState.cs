@@ -79,7 +79,7 @@ public abstract class PlayerState : IState
 
         if (CanCollideWithGhosts)
         {
-            foreach (var ghost in GhostAI.Ghosts)
+            foreach (var ghost in GhostManager.Ghosts)
             {
                 if (playerBox.IsOverlapping(ghost.GetColliderBox()))
                 {

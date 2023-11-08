@@ -52,7 +52,7 @@ public class GhostState_Returning : GhostState
 
     public override void Die()
     {
-        // do nothing
+        // do nothing. this shouldn't be called anymore because of IsCollidable, but just in case...
     }
 
     public override void RefreshPath()

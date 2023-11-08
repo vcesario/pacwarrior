@@ -5,6 +5,8 @@ namespace topdown1;
 
 public class GhostState_Returning : GhostState
 {
+    public override bool IsCollidable => false;
+
     public GhostState_Returning(Ghost ghost) : base(ghost)
     {
     }

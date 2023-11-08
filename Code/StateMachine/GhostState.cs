@@ -10,6 +10,7 @@ public abstract class GhostState : IState
 
     protected float ViewRangeSquared { get; set; }
     protected int PathSize { get; set; } = 10;
+    public abstract bool IsCollidable { get; }
 
     public GhostState(Ghost ghost)
     {

@@ -81,7 +81,7 @@ public abstract class PlayerState : IState
         {
             foreach (var ghost in GhostManager.Ghosts)
             {
-                if (playerBox.IsOverlapping(ghost.GetColliderBox()))
+                if (ghost.State.IsCollidable && playerBox.IsOverlapping(ghost.GetColliderBox()))
                 {
                     m_CollidedGhosts.Add(ghost);
                 }

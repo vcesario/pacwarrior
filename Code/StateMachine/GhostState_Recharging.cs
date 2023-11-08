@@ -4,6 +4,8 @@ namespace topdown1;
 
 public class GhostState_Recharging : GhostState
 {
+    public override bool IsCollidable => false;
+
     public GhostState_Recharging(Ghost ghost) : base(ghost)
     {
 

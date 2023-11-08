@@ -6,6 +6,8 @@ namespace topdown1;
 
 public class GhostState_Chasing : GhostState
 {
+    public override bool IsCollidable => true;
+
     public GhostState_Chasing(Ghost ghost) : base(ghost)
     {
     }

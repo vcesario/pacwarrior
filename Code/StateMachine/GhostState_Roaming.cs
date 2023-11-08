@@ -6,6 +6,8 @@ namespace topdown1;
 
 public class GhostState_Roaming : GhostState
 {
+    public override bool IsCollidable => true;
+
     public GhostState_Roaming(Ghost ghost) : base(ghost)
     {
 

@@ -1,0 +1,1 @@
+- Monogame x Aseprite plugin installation: https://monogameaseprite.net/guides/getting-started/installation.html?tabs=net-cli

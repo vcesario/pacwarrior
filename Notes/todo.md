@@ -19,7 +19,7 @@
 - [x] player win condition: collect all coins, game over screen (good)
 - [x] ghost ai
 - [x] player power: collect special coin to power up for X seconds
-- [] enemy respawn
+- [x] enemy respawn
 - [] animation system - player, ghost, coins
 - [] player 2
 - [] player bot
